@@ -1,6 +1,5 @@
 package com.hunko.missionmatching.core.domain;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 public class TestMissionFactory {
@@ -32,7 +31,7 @@ public class TestMissionFactory {
     private static Mission createMission(Long id, MissionStatus missionStatus, Long creator, ZonedDateTime startTime,
                                          ZonedDateTime endDateTime) {
         return new Mission(
-                id,
+                MissionId.of(id),
                 "test" + (id == null ? "" : id.toString()),
                 new TimePeriod(startTime, endDateTime),
                 Creator.of(creator),

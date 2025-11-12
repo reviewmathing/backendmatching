@@ -14,7 +14,7 @@ public abstract class DomainEventUnitTest {
         domainEventPublisher.init();
     }
 
-    protected  <T> T getEvent(Class<T> eventClass) {
+    protected <T> T getEvent(Class<T> eventClass) {
         return eventListener.getEvent(eventClass);
     }
 }

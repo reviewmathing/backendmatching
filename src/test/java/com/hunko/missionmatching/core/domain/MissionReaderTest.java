@@ -3,10 +3,9 @@ package com.hunko.missionmatching.core.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.hunko.missionmatching.storage.MissionCursor;
-import com.hunko.missionmatching.storage.MissionRepository;
 import com.hunko.missionmatching.storage.MissionEntity;
+import com.hunko.missionmatching.storage.MissionRepository;
 import jakarta.persistence.EntityManager;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;

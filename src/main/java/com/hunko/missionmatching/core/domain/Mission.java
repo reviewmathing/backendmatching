@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 public class Mission {
 
-    private final Long id;
+    private final MissionId id;
     private final String title;
     private final TimePeriod timePeriod;
     private final Creator creator;
@@ -15,10 +15,10 @@ public class Mission {
 
 
     public Mission(String title, TimePeriod timePeriod, Creator creator) {
-        this(null, title, timePeriod, creator, MissionStatus.PENDING);
+        this(MissionId.emtpy(), title, timePeriod, creator, MissionStatus.PENDING);
     }
 
-    public Mission(Long id, String title, TimePeriod timePeriod, Creator creator, MissionStatus status) {
+    public Mission(MissionId id, String title, TimePeriod timePeriod, Creator creator, MissionStatus status) {
         if (title == null || title.isEmpty() || creator == null || timePeriod == null) {
             ErrorType.INVALID_INPUT.throwException();
         }
@@ -35,7 +35,7 @@ public class Mission {
             ErrorType.INVALID_INPUT.throwException();
         }
         this.status = MissionStatus.ONGOING;
-        DomainEventPublisher.instance().published(new MissionOngoinged(this.id));
+        DomainEventPublisher.instance().published(new MissionOngoinged(this.id.toLong()));
     }
 
     public void updateCompleted(LocalDateTime endDate) {
@@ -44,6 +44,6 @@ public class Mission {
             ErrorType.INVALID_INPUT.throwException();
         }
         this.status = MissionStatus.COMPLETED;
-        DomainEventPublisher.instance().published(new MissionCompleted(this.id));
+        DomainEventPublisher.instance().published(new MissionCompleted(this.id.toLong()));
     }
 }

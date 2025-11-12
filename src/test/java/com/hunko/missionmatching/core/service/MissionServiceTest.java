@@ -5,21 +5,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.hunko.missionmatching.core.Authorities;
-import com.hunko.missionmatching.core.domain.MissionCompleted;
-import com.hunko.missionmatching.core.exception.CoreException;
-import com.hunko.missionmatching.storage.MissionCursor;
+import com.hunko.missionmatching.core.application.service.MissionService;
 import com.hunko.missionmatching.core.domain.Creator;
 import com.hunko.missionmatching.core.domain.Mission;
+import com.hunko.missionmatching.core.domain.MissionCompleted;
 import com.hunko.missionmatching.core.domain.MissionCreator;
+import com.hunko.missionmatching.core.domain.MissionOngoinged;
 import com.hunko.missionmatching.core.domain.MissionReader;
+import com.hunko.missionmatching.core.domain.MissionRegistered;
 import com.hunko.missionmatching.core.domain.MissionStatus;
 import com.hunko.missionmatching.core.domain.TimePeriod;
-import com.hunko.missionmatching.core.domain.MissionOngoinged;
-import com.hunko.missionmatching.core.domain.MissionRegistered;
-import com.hunko.missionmatching.core.application.service.MissionService;
-import com.hunko.missionmatching.helper.even.DomainEventUnitTest;
+import com.hunko.missionmatching.core.exception.CoreException;
 import com.hunko.missionmatching.helper.FakeMissionReader;
 import com.hunko.missionmatching.helper.FakeMissionSaver;
+import com.hunko.missionmatching.helper.even.DomainEventUnitTest;
+import com.hunko.missionmatching.storage.MissionCursor;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -35,7 +35,7 @@ class MissionServiceTest extends DomainEventUnitTest {
         MissionService missionService = new MissionService(missionCreator, fakeMissionSaver,
                 new MissionReader(null));
         ZonedDateTime startDate = ZonedDateTime.of(LocalDateTime.of(2020, 1, 1, 0, 0, 0), ZoneId.systemDefault());
-        ZonedDateTime endDate = ZonedDateTime.of(LocalDateTime.of(2020, 1, 1, 23, 59, 59),ZoneId.systemDefault());
+        ZonedDateTime endDate = ZonedDateTime.of(LocalDateTime.of(2020, 1, 1, 23, 59, 59), ZoneId.systemDefault());
         String title = "test";
         Creator creator = Creator.of(1L);
 
@@ -57,7 +57,7 @@ class MissionServiceTest extends DomainEventUnitTest {
         MissionService missionService = new MissionService(missionCreator, fakeMissionSaver,
                 new MissionReader(null));
         ZonedDateTime startDate = ZonedDateTime.of(LocalDateTime.of(2020, 1, 1, 0, 0, 0), ZoneId.systemDefault());
-        ZonedDateTime endDate = ZonedDateTime.of(LocalDateTime.of(2020, 1, 1, 23, 59, 59),ZoneId.systemDefault());
+        ZonedDateTime endDate = ZonedDateTime.of(LocalDateTime.of(2020, 1, 1, 23, 59, 59), ZoneId.systemDefault());
         String title = "test";
         Creator creator = Creator.of(1L);
 
@@ -82,7 +82,7 @@ class MissionServiceTest extends DomainEventUnitTest {
         List<Mission> missions = missionService.loadFrom(Authorities.ADMIN, emptyRequest);
 
         assertThat(missions).hasSize(5);
-        assertThat(missions.stream().map(Mission::getId)).containsExactly(1L, 2L, 3L, 4L, 5L);
+        assertThat(missions.stream().map(m -> m.getId().toLong())).containsExactly(1L, 2L, 3L, 4L, 5L);
     }
 
     @Test
@@ -101,40 +101,40 @@ class MissionServiceTest extends DomainEventUnitTest {
         List<Mission> missions = missionService.loadFrom(Authorities.USER, emptyRequest);
 
         assertThat(missions).hasSize(2);
-        assertThat(missions.stream().map(Mission::getId)).containsExactly(1L, 2L);
+        assertThat(missions.stream().map(m -> m.getId().toLong())).containsExactly(1L, 2L);
     }
 
     @Test
-    void 미션_ONGOING으로_변경(){
+    void 미션_ONGOING으로_변경() {
         FakeMissionReader fakeMissionReader = new FakeMissionReader();
         Mission mission = createMission(1L, MissionStatus.PENDING, 1L);
         fakeMissionReader.addMission(mission);
         FakeMissionSaver fakeMissionSaver = new FakeMissionSaver();
         MissionService missionService = new MissionService(null, fakeMissionSaver, fakeMissionReader);
 
-        missionService.updateOngoing(1L,mission.getTimePeriod().getServerStartDateTime());
+        missionService.updateOngoing(1L, mission.getTimePeriod().getServerStartDateTime());
 
-        Mission savedMission = fakeMissionSaver.getMission(mission.getId().intValue());
+        Mission savedMission = fakeMissionSaver.getMission(mission.getId().toLong().intValue());
         assertThat(savedMission.getStatus()).isEqualTo(MissionStatus.ONGOING);
         MissionOngoinged event = getEvent(MissionOngoinged.class);
         assertThat(event).isNotNull();
-        assertThat(event.id()).isEqualTo(savedMission.getId());
+        assertThat(event.id()).isEqualTo(savedMission.getId().toLong());
     }
 
     @Test
-    void 미션_COMPLETED으로_변경(){
+    void 미션_COMPLETED으로_변경() {
         FakeMissionReader fakeMissionReader = new FakeMissionReader();
         Mission mission = createMission(1L, MissionStatus.ONGOING, 1L);
         fakeMissionReader.addMission(mission);
         FakeMissionSaver fakeMissionSaver = new FakeMissionSaver();
         MissionService missionService = new MissionService(null, fakeMissionSaver, fakeMissionReader);
 
-        missionService.updateCompleted(1L,mission.getTimePeriod().getServerEndDateTime());
+        missionService.updateCompleted(1L, mission.getTimePeriod().getServerEndDateTime());
 
-        Mission savedMission = fakeMissionSaver.getMission(mission.getId().intValue());
+        Mission savedMission = fakeMissionSaver.getMission(mission.getId().toLong().intValue());
         assertThat(savedMission.getStatus()).isEqualTo(MissionStatus.COMPLETED);
         MissionCompleted event = getEvent(MissionCompleted.class);
         assertThat(event).isNotNull();
-        assertThat(event.id()).isEqualTo(savedMission.getId());
+        assertThat(event.id()).isEqualTo(savedMission.getId().toLong());
     }
 }

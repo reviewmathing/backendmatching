@@ -32,7 +32,7 @@ public abstract class MissionScheduler {
 
     public void schedule(Mission mission) {
         LocalDateTime time = getScheduleTime(mission);
-        SchedulerTask schedulerTask = new SchedulerTask(time, mission.getId());
+        SchedulerTask schedulerTask = new SchedulerTask(time, mission.getId().toLong());
         delayQueue.add(schedulerTask);
     }
 

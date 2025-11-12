@@ -1,8 +1,8 @@
 package com.hunko.missionmatching.helper;
 
 import com.hunko.missionmatching.core.domain.Mission;
-import com.hunko.missionmatching.storage.MissionCursor;
 import com.hunko.missionmatching.core.domain.MissionReader;
+import com.hunko.missionmatching.storage.MissionCursor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -47,7 +47,7 @@ public class FakeMissionReader extends MissionReader {
 
     @Override
     public List<Mission> readPendingMission(MissionCursor missionCursor) {
-        if(missionCursor.isFirst()) {
+        if (missionCursor.isFirst()) {
             return getMissions(pandingMissions, null, missionCursor.limit());
         }
         Optional<Mission> mission = getMissions(pandingMissions, missionCursor.id());
@@ -59,7 +59,7 @@ public class FakeMissionReader extends MissionReader {
 
     @Override
     public List<Mission> readCompletedMission(MissionCursor missionCursor) {
-        if(missionCursor.isFirst()) {
+        if (missionCursor.isFirst()) {
             return getMissions(completedMissions, null, missionCursor.limit());
         }
         Optional<Mission> mission = getMissions(completedMissions, missionCursor.id());
@@ -70,7 +70,7 @@ public class FakeMissionReader extends MissionReader {
     }
 
     private Optional<Mission> getMissions(List<Mission> missions, Long id) {
-        return missions.stream().filter(mission -> mission.getId().equals(id)).findAny();
+        return missions.stream().filter(mission -> mission.getId().toLong().equals(id)).findAny();
     }
 
     private List<Mission> getMissions(List<Mission> missions, Mission cursorMission, int limit) {
@@ -86,7 +86,7 @@ public class FakeMissionReader extends MissionReader {
             return missions;
         }
         missions = getMissions(pandingMissions, id);
-        if(missions.isPresent()) {
+        if (missions.isPresent()) {
             return missions;
         }
         return getMissions(completedMissions, id);

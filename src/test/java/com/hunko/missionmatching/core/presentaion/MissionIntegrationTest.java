@@ -133,7 +133,7 @@ public class MissionIntegrationTest {
         MvcResult result = mockMvc.perform(
                         RequestBuildersHelper.get("/api/missions")
                                 .authentication(String.valueOf(1), "ADMIN")
-                                .param("id", cursor.getId())
+                                .param("id", cursor.getId().toLong())
                                 .param("limit", 20)
                                 .param("start", cursor.getTimePeriod().getOriginStartDate())
                                 .param("end", cursor.getTimePeriod().getOriginEndDate())
@@ -150,7 +150,7 @@ public class MissionIntegrationTest {
         MissionPageDto missionPageDto = mapper.readValue(result.getResponse().getContentAsString(),
                 MissionPageDto.class);
         assertThat(missionPageDto.missions()).hasSize(3);
-        List<Long> ids = missions.subList(2, missions.size()).stream().map(Mission::getId).toList();
+        List<Long> ids = missions.subList(2, missions.size()).stream().map((m) -> m.getId().toLong()).toList();
         assertThat(missionPageDto.missions().stream().map(MissionDto::id)).containsExactlyElementsOf(ids);
     }
 
@@ -167,7 +167,7 @@ public class MissionIntegrationTest {
         MvcResult result = mockMvc.perform(
                         RequestBuildersHelper.get("/api/missions")
                                 .authentication(String.valueOf(1), "USER")
-                                .param("id", cursor.getId())
+                                .param("id", cursor.getId().toLong())
                                 .param("limit", 20)
                                 .param("start", cursor.getTimePeriod().getOriginStartDate())
                                 .param("end", cursor.getTimePeriod().getOriginEndDate())

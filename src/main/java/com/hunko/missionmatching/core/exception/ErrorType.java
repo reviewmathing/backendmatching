@@ -2,7 +2,9 @@ package com.hunko.missionmatching.core.exception;
 
 public enum ErrorType {
     INVALID_INPUT(""),
-    ENTITY_NOT_FOUND(""),;
+    ENTITY_NOT_FOUND(""),
+    DUPLICATE_REVIEW_REQUEST("중복된 리뷰입니다."),
+    INVALID_MISSION("잘못된 입력입니다");
 
     private final String message;
 

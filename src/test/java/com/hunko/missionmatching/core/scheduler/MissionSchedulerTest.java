@@ -23,7 +23,7 @@ class MissionSchedulerTest {
                 .atMost(1, TimeUnit.MINUTES)
                 .until(() ->
                         testMissionScheduler.isHandleCall
-                                && testMissionScheduler.missionId.equals(mission.getId())
+                                && testMissionScheduler.missionId.equals(mission.getId().toLong())
                                 && testMissionScheduler.handleTime.isEqual(now.plusMinutes(1))
                 );
     }

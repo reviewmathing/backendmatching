@@ -75,7 +75,7 @@ public class RequestBuildersHelper {
         }
 
         public MockMvcRequestBuilderWrapper param(String key, Object value) {
-            this.requestBuilder = this.requestBuilder.param(key,value.toString());
+            this.requestBuilder = this.requestBuilder.param(key, value.toString());
             return this;
         }
     }

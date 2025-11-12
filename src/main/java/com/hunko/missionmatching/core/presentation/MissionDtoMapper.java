@@ -9,7 +9,7 @@ public class MissionDtoMapper {
 
     public static MissionDto toDto(Mission mission) {
         return new MissionDto(
-                mission.getId(),
+                mission.getId().toLong(),
                 mission.getTitle(),
                 mission.getTimePeriod().getOriginStartDate(),
                 mission.getTimePeriod().getOriginEndDate(),

@@ -93,8 +93,8 @@ class MissionTest extends DomainEventUnitTest {
 
     private static Stream<Arguments> createFailArguments() {
         String title = "test";
-        ZonedDateTime startDate = ZonedDateTime.of(2020, 1, 1, 0, 0, 0,0,ZoneId.systemDefault());
-        ZonedDateTime endDate = ZonedDateTime.of(2020, 1, 1, 23, 59, 59,0,ZoneId.systemDefault());
+        ZonedDateTime startDate = ZonedDateTime.of(2020, 1, 1, 0, 0, 0, 0, ZoneId.systemDefault());
+        ZonedDateTime endDate = ZonedDateTime.of(2020, 1, 1, 23, 59, 59, 0, ZoneId.systemDefault());
         Creator creator = Creator.of(1L);
         return Stream.of(
                 Arguments.of(null, startDate, endDate, creator),
