@@ -16,6 +16,7 @@ import com.hunko.missionmatching.storage.MissionRepository;
 import com.jayway.jsonpath.JsonPath;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -44,10 +45,12 @@ public class MissionIntegrationTest {
         LocalDateTime startDateTime = LocalDateTime.now();
         LocalDateTime endDateTime = startDateTime.plusDays(1);
         Long creatorId = 1L;
+        String zone = ZoneId.systemDefault().toString();
         Map<String, ? extends Serializable> requestBody = Map.of(
                 "title", title,
                 "startDateTime", startDateTime,
-                "endDateTime", endDateTime
+                "endDateTime", endDateTime,
+                "zone", zone
         );
 
         MvcResult result = mockMvc.perform(
@@ -65,8 +68,8 @@ public class MissionIntegrationTest {
                 .get()
                 .hasFieldOrPropertyWithValue("id", id)
                 .hasFieldOrPropertyWithValue("title", title)
-                .hasFieldOrPropertyWithValue("startDate", startDateTime)
-                .hasFieldOrPropertyWithValue("endDate", endDateTime)
+                .hasFieldOrPropertyWithValue("startDate", startDateTime.atZone(ZoneId.systemDefault()))
+                .hasFieldOrPropertyWithValue("endDate", endDateTime.atZone(ZoneId.systemDefault()))
                 .hasFieldOrPropertyWithValue("creator", creatorId);
     }
 
@@ -76,10 +79,12 @@ public class MissionIntegrationTest {
         LocalDateTime startDateTime = LocalDateTime.now();
         LocalDateTime endDateTime = startDateTime.plusDays(1);
         Long creatorId = 1L;
+        String zone = ZoneId.systemDefault().toString();
         Map<String, ? extends Serializable> requestBody = Map.of(
                 "title", title,
                 "startDateTime", startDateTime,
-                "endDateTime", endDateTime
+                "endDateTime", endDateTime,
+                "zone", zone
         );
 
         MvcResult result = mockMvc.perform(
@@ -97,10 +102,12 @@ public class MissionIntegrationTest {
         String title = "test";
         LocalDateTime startDateTime = LocalDateTime.now();
         LocalDateTime endDateTime = startDateTime.plusDays(1);
+        String zone = ZoneId.systemDefault().toString();
         Map<String, ? extends Serializable> requestBody = Map.of(
                 "title", title,
                 "startDateTime", startDateTime,
-                "endDateTime", endDateTime
+                "endDateTime", endDateTime,
+                "zone", zone
         );
 
         MvcResult result = mockMvc.perform(
@@ -126,10 +133,11 @@ public class MissionIntegrationTest {
         MvcResult result = mockMvc.perform(
                         RequestBuildersHelper.get("/api/missions")
                                 .authentication(String.valueOf(1), "ADMIN")
-                                .param("id",cursor.getId())
+                                .param("id", cursor.getId())
                                 .param("limit", 20)
-                                .param("start", cursor.getTimePeriod().getStartDate())
-                                .param("end", cursor.getTimePeriod().getEndDate())
+                                .param("start", cursor.getTimePeriod().getOriginStartDate())
+                                .param("end", cursor.getTimePeriod().getOriginEndDate())
+                                .param("zone", cursor.getTimePeriod().getZoneId())
                                 .param("status", cursor.getStatus())
                 ).andDo(print())
                 .andReturn();
@@ -159,10 +167,11 @@ public class MissionIntegrationTest {
         MvcResult result = mockMvc.perform(
                         RequestBuildersHelper.get("/api/missions")
                                 .authentication(String.valueOf(1), "USER")
-                                .param("id",cursor.getId())
+                                .param("id", cursor.getId())
                                 .param("limit", 20)
-                                .param("start", cursor.getTimePeriod().getStartDate())
-                                .param("end", cursor.getTimePeriod().getEndDate())
+                                .param("start", cursor.getTimePeriod().getOriginStartDate())
+                                .param("end", cursor.getTimePeriod().getOriginEndDate())
+                                .param("zone", ZoneId.systemDefault())
                                 .param("status", cursor.getStatus())
                 ).andDo(print())
                 .andReturn();

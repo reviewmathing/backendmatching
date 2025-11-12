@@ -7,6 +7,7 @@ import com.hunko.missionmatching.storage.MissionRepository;
 import com.hunko.missionmatching.storage.MissionEntity;
 import jakarta.persistence.EntityManager;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class MissionReaderTest {
 
     @Test
     public void readAllMission() {
-        LocalDateTime now = LocalDateTime.now();
+        ZonedDateTime now = ZonedDateTime.now();
         MissionEntity missionEntity1 = new MissionEntity(
                 null,
                 "test1",

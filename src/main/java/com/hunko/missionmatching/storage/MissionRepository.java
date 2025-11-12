@@ -2,6 +2,7 @@ package com.hunko.missionmatching.storage;
 
 import com.hunko.missionmatching.core.domain.MissionStatus;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import org.springframework.data.domain.Limit;
 import org.springframework.data.domain.Sort;
@@ -24,7 +25,7 @@ public interface MissionRepository extends JpaRepository<MissionEntity, Long> {
             or (m.startDate = :cursorStartDate and m.id > :cursorId)
             order by m.startDate asc
             """)
-    List<MissionEntity> findMissionByStartDate(LocalDateTime cursorStartDate, long cursorId, MissionStatus status,
+    List<MissionEntity> findMissionByStartDate(ZonedDateTime cursorStartDate, long cursorId, MissionStatus status,
                                                int limit);
 
     @Query("""
@@ -35,6 +36,6 @@ public interface MissionRepository extends JpaRepository<MissionEntity, Long> {
                 or (m.endDate = :cursorEndDate and m.id > :cursorId)
                 order by m.endDate
             """)
-    List<MissionEntity> findMissionByEndDate(LocalDateTime cursorEndDate, long cursorId, MissionStatus status,
+    List<MissionEntity> findMissionByEndDate(ZonedDateTime cursorEndDate, long cursorId, MissionStatus status,
                                              Limit limit);
 }

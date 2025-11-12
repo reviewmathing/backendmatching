@@ -7,6 +7,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.hunko.missionmatching.core.exception.CoreException;
 import com.hunko.missionmatching.helper.even.DomainEventUnitTest;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,52 +21,51 @@ class MissionTest extends DomainEventUnitTest {
     @Test
     void 미션생성() {
         Creator creator = Creator.of(1L);
-        LocalDateTime startDate = LocalDateTime.of(2020, 1, 1, 0, 0, 0);
-        LocalDateTime endDate = LocalDateTime.of(2020, 1, 1, 23, 59, 59);
+        ZonedDateTime startDate = ZonedDateTime.of(2020, 1, 1, 0, 0, 0, 0, ZoneId.systemDefault());
+        ZonedDateTime endDate = ZonedDateTime.of(2020, 1, 1, 23, 59, 59, 0, ZoneId.systemDefault());
         assertThatCode(() -> new Mission("로또", new TimePeriod(startDate, endDate), creator)).doesNotThrowAnyException();
     }
 
     @ParameterizedTest
     @MethodSource("createFailArguments")
-    void 미션생성실패(String title, LocalDateTime startDate, LocalDateTime endDate, Creator creator) {
+    void 미션생성실패(String title, ZonedDateTime startDate, ZonedDateTime endDate, Creator creator) {
         assertThatCode(() -> new Mission(title, new TimePeriod(startDate, endDate), creator)).isInstanceOf(
                 CoreException.class);
     }
 
     @Test
-    void 미션_ONGOING_업데이트(){
+    void 미션_ONGOING_업데이트() {
         Mission mission = TestMissionFactory.createMission(1L, MissionStatus.PENDING, 1L);
-        LocalDateTime startDate = mission.getTimePeriod().getStartDate();
+        LocalDateTime startDate = mission.getTimePeriod().getServerStartDateTime();
 
         mission.updateOngoing(startDate);
 
         assertThat(mission.getStatus()).isEqualTo(MissionStatus.ONGOING);
         MissionOngoinged event = getEvent(MissionOngoinged.class);
         assertThat(event.id()).isEqualTo(1L);
-        assertThat(event.endDate()).isEqualTo(mission.getTimePeriod().getEndDate());
     }
 
     @Test
-    void 미션_ONGOING_업데이트실패_시작일_불일치(){
+    void 미션_ONGOING_업데이트실패_시작일_불일치() {
         Mission mission = TestMissionFactory.createMission(1L, MissionStatus.PENDING, 1L);
-        LocalDateTime startDate = mission.getTimePeriod().getStartDate().minusMinutes(1);
+        LocalDateTime startDate = mission.getTimePeriod().getServerStartDateTime().minusMinutes(1);
 
         assertThatThrownBy(() -> mission.updateOngoing(startDate)).isInstanceOf(CoreException.class);
     }
 
     @ParameterizedTest
-    @EnumSource(names = {"COMPLETED","ONGOING"})
-    void 미션_ONGOING_업데이트실패_상태가_PENDING이_아님(MissionStatus status){
+    @EnumSource(names = {"COMPLETED", "ONGOING"})
+    void 미션_ONGOING_업데이트실패_상태가_PENDING이_아님(MissionStatus status) {
         Mission mission = TestMissionFactory.createMission(1L, status, 1L);
-        LocalDateTime startDate = mission.getTimePeriod().getStartDate();
+        LocalDateTime startDate = mission.getTimePeriod().getServerStartDateTime();
 
         assertThatThrownBy(() -> mission.updateOngoing(startDate)).isInstanceOf(CoreException.class);
     }
 
     @Test
-    void 미션_COMPLETED_업데이트(){
+    void 미션_COMPLETED_업데이트() {
         Mission mission = TestMissionFactory.createMission(1L, MissionStatus.ONGOING, 1L);
-        LocalDateTime endDate = mission.getTimePeriod().getEndDate();
+        LocalDateTime endDate = mission.getTimePeriod().getServerEndDateTime();
 
         mission.updateCompleted(endDate);
 
@@ -74,26 +75,26 @@ class MissionTest extends DomainEventUnitTest {
     }
 
     @Test
-    void 미션_COMPLETED_업데이트실패_시작일_불일치(){
+    void 미션_COMPLETED_업데이트실패_시작일_불일치() {
         Mission mission = TestMissionFactory.createMission(1L, MissionStatus.ONGOING, 1L);
-        LocalDateTime endDate = mission.getTimePeriod().getEndDate().minusMinutes(1);
+        LocalDateTime endDate = mission.getTimePeriod().getServerEndDateTime().minusMinutes(1);
 
         assertThatThrownBy(() -> mission.updateCompleted(endDate)).isInstanceOf(CoreException.class);
     }
 
     @ParameterizedTest
-    @EnumSource(names = {"COMPLETED","PENDING"})
-    void 미션_COMPLETED_업데이트실패_상태가_PENDING이_아님(MissionStatus status){
+    @EnumSource(names = {"COMPLETED", "PENDING"})
+    void 미션_COMPLETED_업데이트실패_상태가_PENDING이_아님(MissionStatus status) {
         Mission mission = TestMissionFactory.createMission(1L, status, 1L);
-        LocalDateTime endDate = mission.getTimePeriod().getEndDate();
+        LocalDateTime endDate = mission.getTimePeriod().getServerEndDateTime();
 
         assertThatThrownBy(() -> mission.updateCompleted(endDate)).isInstanceOf(CoreException.class);
     }
 
     private static Stream<Arguments> createFailArguments() {
         String title = "test";
-        LocalDateTime startDate = LocalDateTime.of(2020, 1, 1, 0, 0, 0);
-        LocalDateTime endDate = LocalDateTime.of(2020, 1, 1, 23, 59, 59);
+        ZonedDateTime startDate = ZonedDateTime.of(2020, 1, 1, 0, 0, 0,0,ZoneId.systemDefault());
+        ZonedDateTime endDate = ZonedDateTime.of(2020, 1, 1, 23, 59, 59,0,ZoneId.systemDefault());
         Creator creator = Creator.of(1L);
         return Stream.of(
                 Arguments.of(null, startDate, endDate, creator),

@@ -1,9 +1,12 @@
 package com.hunko.missionmatching.util;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
-import org.junit.jupiter.api.DisplayName;
+
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import org.junit.jupiter.api.Test;
 
 class DateUtilTest {
@@ -32,5 +35,16 @@ class DateUtilTest {
         LocalDateTime after = LocalDateTime.of(2024, 1, 1, 10, 0, 1);
         LocalDateTime before = LocalDateTime.of(2024, 1, 1, 10, 0, 0);
         assertTrue(DateUtil.equalOrAfter(after, before));
+    }
+
+    @Test
+    void 지역변경(){
+        LocalDateTime localDateTime = LocalDateTime.of(2024, 1, 1, 10, 0);
+        ZonedDateTime now = ZonedDateTime.of(localDateTime, ZoneId.systemDefault());
+        ZonedDateTime newYork = now.withZoneSameInstant(ZoneId.of("America/New_York"));
+
+        LocalDateTime serverDateTime = DateUtil.toServerDateTime(newYork);
+
+        assertThat(localDateTime).isEqualTo(serverDateTime);
     }
 }

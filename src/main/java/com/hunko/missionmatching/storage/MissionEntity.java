@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,14 +29,14 @@ public class MissionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private ZonedDateTime startDate;
+    private ZonedDateTime endDate;
     private Long creator;
     @Enumerated(EnumType.STRING)
     private MissionStatus status;
 
     @Builder
-    public MissionEntity(Long id, String title, LocalDateTime startDate, LocalDateTime endDate, Long creator, MissionStatus status) {
+    public MissionEntity(Long id, String title, ZonedDateTime startDate, ZonedDateTime endDate, Long creator, MissionStatus status) {
         this.id = id;
         this.title = title;
         this.startDate = startDate;

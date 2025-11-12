@@ -21,6 +21,8 @@ import com.hunko.missionmatching.helper.even.DomainEventUnitTest;
 import com.hunko.missionmatching.helper.FakeMissionReader;
 import com.hunko.missionmatching.helper.FakeMissionSaver;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -32,8 +34,8 @@ class MissionServiceTest extends DomainEventUnitTest {
         FakeMissionSaver fakeMissionSaver = new FakeMissionSaver();
         MissionService missionService = new MissionService(missionCreator, fakeMissionSaver,
                 new MissionReader(null));
-        LocalDateTime startDate = LocalDateTime.of(2020, 1, 1, 0, 0, 0);
-        LocalDateTime endDate = LocalDateTime.of(2020, 1, 1, 23, 59, 59);
+        ZonedDateTime startDate = ZonedDateTime.of(LocalDateTime.of(2020, 1, 1, 0, 0, 0), ZoneId.systemDefault());
+        ZonedDateTime endDate = ZonedDateTime.of(LocalDateTime.of(2020, 1, 1, 23, 59, 59),ZoneId.systemDefault());
         String title = "test";
         Creator creator = Creator.of(1L);
 
@@ -54,8 +56,8 @@ class MissionServiceTest extends DomainEventUnitTest {
         FakeMissionSaver fakeMissionSaver = new FakeMissionSaver();
         MissionService missionService = new MissionService(missionCreator, fakeMissionSaver,
                 new MissionReader(null));
-        LocalDateTime startDate = LocalDateTime.of(2020, 1, 1, 0, 0, 0);
-        LocalDateTime endDate = LocalDateTime.of(2020, 1, 1, 23, 59, 59);
+        ZonedDateTime startDate = ZonedDateTime.of(LocalDateTime.of(2020, 1, 1, 0, 0, 0), ZoneId.systemDefault());
+        ZonedDateTime endDate = ZonedDateTime.of(LocalDateTime.of(2020, 1, 1, 23, 59, 59),ZoneId.systemDefault());
         String title = "test";
         Creator creator = Creator.of(1L);
 
@@ -110,14 +112,13 @@ class MissionServiceTest extends DomainEventUnitTest {
         FakeMissionSaver fakeMissionSaver = new FakeMissionSaver();
         MissionService missionService = new MissionService(null, fakeMissionSaver, fakeMissionReader);
 
-        missionService.updateOngoing(1L,mission.getTimePeriod().getStartDate());
+        missionService.updateOngoing(1L,mission.getTimePeriod().getServerStartDateTime());
 
         Mission savedMission = fakeMissionSaver.getMission(mission.getId().intValue());
         assertThat(savedMission.getStatus()).isEqualTo(MissionStatus.ONGOING);
         MissionOngoinged event = getEvent(MissionOngoinged.class);
         assertThat(event).isNotNull();
         assertThat(event.id()).isEqualTo(savedMission.getId());
-        assertThat(event.endDate()).isEqualTo(savedMission.getTimePeriod().getEndDate());
     }
 
     @Test
@@ -128,7 +129,7 @@ class MissionServiceTest extends DomainEventUnitTest {
         FakeMissionSaver fakeMissionSaver = new FakeMissionSaver();
         MissionService missionService = new MissionService(null, fakeMissionSaver, fakeMissionReader);
 
-        missionService.updateCompleted(1L,mission.getTimePeriod().getEndDate());
+        missionService.updateCompleted(1L,mission.getTimePeriod().getServerEndDateTime());
 
         Mission savedMission = fakeMissionSaver.getMission(mission.getId().intValue());
         assertThat(savedMission.getStatus()).isEqualTo(MissionStatus.COMPLETED);

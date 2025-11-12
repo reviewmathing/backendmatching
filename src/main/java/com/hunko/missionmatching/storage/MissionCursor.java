@@ -2,8 +2,9 @@ package com.hunko.missionmatching.storage;
 
 import com.hunko.missionmatching.core.domain.MissionStatus;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
-public record MissionCursor(Long id, MissionStatus status, LocalDateTime start, LocalDateTime end, int limit) {
+public record MissionCursor(Long id, MissionStatus status, ZonedDateTime start, ZonedDateTime end, int limit) {
 
     public boolean isFirst() {
         return id == null;

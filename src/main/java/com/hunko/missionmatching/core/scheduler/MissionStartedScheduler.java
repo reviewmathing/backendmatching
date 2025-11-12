@@ -19,6 +19,6 @@ public class MissionStartedScheduler extends MissionScheduler {
 
     @Override
     protected LocalDateTime getScheduleTime(Mission mission) {
-        return mission.getTimePeriod().getStartDate();
+        return mission.getTimePeriod().getServerStartDateTime();
     }
 }

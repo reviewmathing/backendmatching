@@ -10,6 +10,6 @@ public class FutureBasedOnNowSpecification implements FutureDateSpecification {
     @Override
     public boolean isSatisfiedBy(TimePeriod timePeriod) {
         LocalDateTime now = LocalDateTime.now().minusMinutes(1);
-        return DateUtil.equalOrAfter(timePeriod.getStartDate(), now) && DateUtil.equalOrAfter(timePeriod.getEndDate(), now);
+        return DateUtil.equalOrAfter(timePeriod.getServerStartDateTime(), now) && DateUtil.equalOrAfter(timePeriod.getServerEndDateTime(), now);
     }
 }

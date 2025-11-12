@@ -11,8 +11,9 @@ public class MissionDtoMapper {
         return new MissionDto(
                 mission.getId(),
                 mission.getTitle(),
-                mission.getTimePeriod().getStartDate(),
-                mission.getTimePeriod().getEndDate(),
+                mission.getTimePeriod().getOriginStartDate(),
+                mission.getTimePeriod().getOriginEndDate(),
+                mission.getTimePeriod().getZoneId(),
                 mission.getStatus()
         );
     }

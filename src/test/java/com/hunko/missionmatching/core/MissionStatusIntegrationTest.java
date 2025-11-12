@@ -7,6 +7,8 @@ import com.hunko.missionmatching.core.presentation.MissionRegisterDto;
 import com.hunko.missionmatching.storage.MissionEntity;
 import com.hunko.missionmatching.storage.MissionRepository;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
@@ -43,7 +45,7 @@ class MissionStatusIntegrationTest {
         headers.set("X-User-ID", creator.toString());
         headers.set("X-User-ROLE", "ADMIN");
         headers.setContentType(MediaType.APPLICATION_JSON);
-        MissionRegisterDto missionRegisterDto = new MissionRegisterDto(title, start, end);
+        MissionRegisterDto missionRegisterDto = new MissionRegisterDto(title, start, end, ZoneId.systemDefault());
         // HttpEntity 생성 (헤더 + 바디)
         HttpEntity<MissionRegisterDto> entity = new HttpEntity<>(missionRegisterDto, headers);
         ResponseEntity<Map> exchange = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);

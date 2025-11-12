@@ -14,7 +14,7 @@ public class MissionEndScheduler extends MissionScheduler {
 
     @Override
     protected LocalDateTime getScheduleTime(Mission mission) {
-        return mission.getTimePeriod().getEndDate();
+        return mission.getTimePeriod().getServerEndDateTime();
     }
 
     @Override
