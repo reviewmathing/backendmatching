@@ -16,14 +16,14 @@ public abstract class MissionScheduler {
     private final DelayQueue<SchedulerTask> delayQueue = new DelayQueue<>();
 
     public MissionScheduler() {
-        EXECUTOR.execute(()->{
+        EXECUTOR.execute(() -> {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
                     SchedulerTask take = delayQueue.take();
-                    handle(take.missionId,take.time);
+                    handle(take.missionId, take.time);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
-                }catch (Exception e){
+                } catch (Exception e) {
                     log.error(e.getMessage(), e);
                 }
             }
@@ -38,7 +38,7 @@ public abstract class MissionScheduler {
 
     protected abstract LocalDateTime getScheduleTime(Mission mission);
 
-    protected abstract void handle(Long id,LocalDateTime time);
+    protected abstract void handle(Long id, LocalDateTime time);
 
     private static class SchedulerTask implements Delayed {
         private final LocalDateTime time;

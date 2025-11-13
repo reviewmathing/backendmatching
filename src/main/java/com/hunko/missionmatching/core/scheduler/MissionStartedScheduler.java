@@ -1,7 +1,7 @@
 package com.hunko.missionmatching.core.scheduler;
 
-import com.hunko.missionmatching.core.domain.Mission;
 import com.hunko.missionmatching.core.application.service.MissionService;
+import com.hunko.missionmatching.core.domain.Mission;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ public class MissionStartedScheduler extends MissionScheduler {
 
     @Override
     protected void handle(Long id, LocalDateTime startedTime) {
-        missionService.updateOngoing(id,startedTime);
+        missionService.updateOngoing(id, startedTime);
     }
 
     @Override

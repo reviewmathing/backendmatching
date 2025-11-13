@@ -29,7 +29,8 @@ public class FakeReviewRequestSaver extends ReviewRequestSaver {
                 request.getRequester(),
                 request.getMissionId(),
                 request.getReviewCount(),
-                null
+                null,
+                request.getReviewRequestStatus()
         );
     }
 

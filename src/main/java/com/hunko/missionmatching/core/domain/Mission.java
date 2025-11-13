@@ -16,10 +16,11 @@ public class Mission {
 
 
     public Mission(String title, TimePeriod timePeriod, Creator creator, GithubUri missionUrl) {
-        this(MissionId.emtpy(), title, timePeriod, creator, MissionStatus.PENDING,missionUrl);
+        this(MissionId.emtpy(), title, timePeriod, creator, MissionStatus.PENDING, missionUrl);
     }
 
-    public Mission(MissionId id, String title, TimePeriod timePeriod, Creator creator, MissionStatus status, GithubUri missionUrl) {
+    public Mission(MissionId id, String title, TimePeriod timePeriod, Creator creator, MissionStatus status,
+                   GithubUri missionUrl) {
         if (title == null || title.isEmpty() || creator == null || timePeriod == null) {
             ErrorType.INVALID_INPUT.throwException();
         }

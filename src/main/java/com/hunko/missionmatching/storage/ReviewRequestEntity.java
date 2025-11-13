@@ -1,12 +1,14 @@
 package com.hunko.missionmatching.storage;
 
+import com.hunko.missionmatching.core.domain.ReviewRequestType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,7 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(
         indexes = {
-                @Index(name = "mission_id_requestor_id_idx", columnList = "missionId,requesterId", unique = true)
+                @Index(name = "mission_id_requestor_id_reviewRequest_type_idx", columnList = "missionId,requesterId,reviewRequestType", unique = true)
         }
 )
 public class ReviewRequestEntity {
@@ -28,12 +30,16 @@ public class ReviewRequestEntity {
     private Long requesterId;
     private Integer reviewCount;
     private String githubUrl;
+    @Enumerated(EnumType.STRING)
+    private ReviewRequestType reviewRequestType;
 
-    public ReviewRequestEntity(Long id, Long missionId, Long requesterId, Integer reviewCount, String githubUrl) {
+    public ReviewRequestEntity(Long id, Long missionId, Long requesterId, Integer reviewCount, String githubUrl,
+                               ReviewRequestType reviewRequestType) {
         this.id = id;
         this.missionId = missionId;
         this.requesterId = requesterId;
         this.reviewCount = reviewCount;
         this.githubUrl = githubUrl;
+        this.reviewRequestType = reviewRequestType;
     }
 }

@@ -17,7 +17,8 @@ class ReviewGithubUrlUpdateServiceTest {
         fakeMissionReader.addMission(mission);
         ReviewGithubUrlUpdateService service = new ReviewGithubUrlUpdateService(fakeMissionReader);
         GithubUri githubUri = TestGithubUrlFactory.createGithubUri("/test");
-        ReviewRequest request = new ReviewRequest(ReviewRequestId.of(1L), Requester.of(1L), MissionId.of(1L), 5,null);
+        ReviewRequest request = new ReviewRequest(ReviewRequestId.of(1L), Requester.of(1L), MissionId.of(1L), 5, null,
+                ReviewRequestType.REQUEST);
 
         ReviewRequest result = service.updateGithubUrl(request, githubUri);
 
@@ -32,7 +33,8 @@ class ReviewGithubUrlUpdateServiceTest {
         fakeMissionReader.addMission(mission);
         ReviewGithubUrlUpdateService service = new ReviewGithubUrlUpdateService(fakeMissionReader);
         GithubUri githubUri = TestGithubUrlFactory.createGithubUri("/tests/1");
-        ReviewRequest request = new ReviewRequest(ReviewRequestId.of(1L), Requester.of(1L), MissionId.of(1L), 5,null);
+        ReviewRequest request = new ReviewRequest(ReviewRequestId.of(1L), Requester.of(1L), MissionId.of(1L), 5, null,
+                ReviewRequestType.REQUEST);
 
         assertThatThrownBy(() -> service.updateGithubUrl(request, githubUri)).isInstanceOf(CoreException.class);
     }
@@ -42,7 +44,8 @@ class ReviewGithubUrlUpdateServiceTest {
         FakeMissionReader fakeMissionReader = new FakeMissionReader();
         ReviewGithubUrlUpdateService service = new ReviewGithubUrlUpdateService(fakeMissionReader);
         GithubUri githubUri = TestGithubUrlFactory.createGithubUri("/test");
-        ReviewRequest request = new ReviewRequest(ReviewRequestId.of(1L), Requester.of(1L), MissionId.of(1L), 5,null);
+        ReviewRequest request = new ReviewRequest(ReviewRequestId.of(1L), Requester.of(1L), MissionId.of(1L), 5, null,
+                ReviewRequestType.REQUEST);
 
         assertThatThrownBy(() -> service.updateGithubUrl(request, githubUri)).isInstanceOf(CoreException.class);
     }

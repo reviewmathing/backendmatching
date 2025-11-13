@@ -30,6 +30,10 @@ public class RequestBuildersHelper {
         return new MockMvcRequestBuilderAuthWrapper(MockMvcRequestBuilders.post(uriTemplate, uriVariables));
     }
 
+    public static MockMvcRequestBuilderAuthWrapper delete(String uriTemplate, Object... uriVariables) {
+        return new MockMvcRequestBuilderAuthWrapper(MockMvcRequestBuilders.delete(uriTemplate, uriVariables));
+    }
+
     public static class MockMvcRequestBuilderAuthWrapper {
 
         private final MockHttpServletRequestBuilder requestBuilder;

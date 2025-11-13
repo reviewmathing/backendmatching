@@ -14,7 +14,7 @@ public record MissionPageDto(
             MissionDto dto = MissionDtoMapper.toDto(mission);
             result.add(dto);
         }
-        if(missions.isEmpty()) {
+        if (missions.isEmpty()) {
             return new MissionPageDto(List.of(), null);
         }
         return new MissionPageDto(result, result.getLast());

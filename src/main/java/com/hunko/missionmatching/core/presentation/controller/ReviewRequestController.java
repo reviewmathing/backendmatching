@@ -11,6 +11,7 @@ import com.hunko.missionmatching.core.presentation.security.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,6 +43,16 @@ public class ReviewRequestController {
                 MissionId.of(missionId),
                 Requester.of(userId),
                 updateGithubUriDto.toGithubUri()
+        );
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @DeleteMapping("/reviews/{reviewId}")
+    public void cancelReviewRequest(@PathVariable Long missionId, @UserId Long userId, @PathVariable Long reviewId) {
+        reviewRequestService.cancel(
+                ReviewRequestId.of(reviewId),
+                MissionId.of(missionId),
+                Requester.of(userId)
         );
     }
 }

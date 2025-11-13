@@ -8,8 +8,8 @@ import java.util.function.Supplier;
 
 public class CursorUtil {
     public static List<Mission> fetchByCursor(Supplier<Boolean> isEmpty,
-                                       Supplier<List<MissionEntity>> emptyProcessor,
-                                       Supplier<List<MissionEntity>> nonEmptyProcessor) {
+                                              Supplier<List<MissionEntity>> emptyProcessor,
+                                              Supplier<List<MissionEntity>> nonEmptyProcessor) {
         if (isEmpty.get()) {
             List<MissionEntity> apply = emptyProcessor.get();
             return apply.stream().map(MissionMapper::toMission).toList();

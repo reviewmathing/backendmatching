@@ -35,12 +35,24 @@ public class ReviewRequestService {
 
     public void updateGithubUri(ReviewRequestId reviewRequestId, MissionId missionId, Requester requester,
                                 GithubUri githubUri) {
+        ReviewRequest reviewRequest = getReviewRequest(reviewRequestId, missionId,
+                requester);
+        ReviewRequest request = reviewGithubUrlUpdateService.updateGithubUrl(reviewRequest, githubUri);
+        reviewRequestSaver.save(request);
+    }
+
+    public void cancel(ReviewRequestId reviewRequestId, MissionId missionId, Requester requester) {
+        ReviewRequest reviewRequest = getReviewRequest(reviewRequestId, missionId, requester);
+        reviewRequest.cancel();
+        reviewRequestSaver.save(reviewRequest);
+    }
+
+    private ReviewRequest getReviewRequest(ReviewRequestId reviewRequestId, MissionId missionId, Requester requester) {
         ReviewRequest reviewRequest = reviewRequestReader.loadFrom(requester, reviewRequestId)
                 .orElseThrow(ErrorType.ENTITY_NOT_FOUND::toException);
         if (!reviewRequest.getMissionId().equals(missionId)) {
-           ErrorType.INVALID_INPUT.throwException();
+            ErrorType.INVALID_INPUT.throwException();
         }
-        ReviewRequest request = reviewGithubUrlUpdateService.updateGithubUrl(reviewRequest, githubUri);
-        reviewRequestSaver.save(request);
+        return reviewRequest;
     }
 }

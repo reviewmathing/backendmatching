@@ -26,7 +26,7 @@ public class AuthenticationExceptionFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         try {
             authenticationFilter.doFilter(request, response, filterChain);
-        }catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             ResponseBodyDto responseBodyDto = new ResponseBodyDto(e.getMessage());
             objectMapper.writeValue(response.getOutputStream(), responseBodyDto);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -36,7 +36,7 @@ public class AuthenticationExceptionFilter extends OncePerRequestFilter {
 
     @Getter
     @NoArgsConstructor
-    private static class ResponseBodyDto{
+    private static class ResponseBodyDto {
         private String error;
 
         public ResponseBodyDto(String error) {

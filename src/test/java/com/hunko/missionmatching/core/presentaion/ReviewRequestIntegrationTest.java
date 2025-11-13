@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.hunko.missionmatching.core.domain.GithubUri;
 import com.hunko.missionmatching.core.domain.MissionSaver;
 import com.hunko.missionmatching.core.domain.MissionStatus;
+import com.hunko.missionmatching.core.domain.ReviewRequestType;
 import com.hunko.missionmatching.core.domain.TestMissionFactory;
 import com.hunko.missionmatching.helper.RequestBuildersHelper;
 import com.hunko.missionmatching.storage.ReviewRequestEntity;
@@ -56,6 +57,34 @@ class ReviewRequestIntegrationTest {
     }
 
     @Test
+    void 어브민리뷰요청() throws Exception {
+        Long missionId = missionSaver.save(TestMissionFactory.createMission(null, MissionStatus.ONGOING, 1L));
+        MvcResult result = mockMvc.perform(
+                RequestBuildersHelper.post("/api/missions/" + missionId)
+                        .authentication("1", "ADMIN")
+                        .content(Map.of(
+                                "reviewCount", 3L
+                        ))
+        ).andReturn();
+
+        assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
+    }
+
+    @Test
+    void 비인증리뷰요청() throws Exception {
+        Long missionId = missionSaver.save(TestMissionFactory.createMission(null, MissionStatus.ONGOING, 1L));
+        MvcResult result = mockMvc.perform(
+                RequestBuildersHelper.post("/api/missions/" + missionId)
+                        .nonAuthenticated()
+                        .content(Map.of(
+                                "reviewCount", 3L
+                        ))
+        ).andReturn();
+
+        assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
+    }
+
+    @Test
     void 리뷰개수제한보다_많이_요청() throws Exception {
         Long missionId = missionSaver.save(TestMissionFactory.createMission(null, MissionStatus.ONGOING, 1L));
         MvcResult result = mockMvc.perform(
@@ -86,13 +115,15 @@ class ReviewRequestIntegrationTest {
     @Test
     void 요청에_url업데이트() throws Exception {
         GithubUri githubUri = GithubUri.of("https://github.com");
-        Long missionId = missionSaver.save(TestMissionFactory.createMission(null, MissionStatus.ONGOING, 1L, githubUri));
+        Long missionId = missionSaver.save(
+                TestMissionFactory.createMission(null, MissionStatus.ONGOING, 1L, githubUri));
         ReviewRequestEntity reviewRequestEntity = reviewRequestRepository.save(new ReviewRequestEntity(
                 null,
                 missionId,
                 1L,
                 3,
-                null
+                null,
+                ReviewRequestType.REQUEST
         ));
         GithubUri requestUrl = GithubUri.of("https://github.com" + "/test");
 
@@ -107,5 +138,119 @@ class ReviewRequestIntegrationTest {
         assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
         ReviewRequestEntity resultEntity = reviewRequestRepository.findById(reviewRequestEntity.getId()).get();
         assertThat(resultEntity.getGithubUrl()).isEqualTo(requestUrl.toUriString());
+    }
+
+    @Test
+    void 어드민이_url업데이트() throws Exception {
+        GithubUri githubUri = GithubUri.of("https://github.com");
+        Long missionId = missionSaver.save(
+                TestMissionFactory.createMission(null, MissionStatus.ONGOING, 1L, githubUri));
+        ReviewRequestEntity reviewRequestEntity = reviewRequestRepository.save(new ReviewRequestEntity(
+                null,
+                missionId,
+                1L,
+                3,
+                null,
+                ReviewRequestType.REQUEST
+        ));
+        GithubUri requestUrl = GithubUri.of("https://github.com" + "/test");
+
+        MvcResult result = mockMvc.perform(
+                RequestBuildersHelper.post("/api/missions/" + missionId + "/reviews/" + reviewRequestEntity.getId())
+                        .authentication("1", "ADMIN")
+                        .content(Map.of(
+                                "uri", requestUrl.toUriString()
+                        ))
+        ).andReturn();
+
+        assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
+    }
+
+    @Test
+    void 비인증회원이_url업데이트() throws Exception {
+        GithubUri githubUri = GithubUri.of("https://github.com");
+        Long missionId = missionSaver.save(
+                TestMissionFactory.createMission(null, MissionStatus.ONGOING, 1L, githubUri));
+        ReviewRequestEntity reviewRequestEntity = reviewRequestRepository.save(new ReviewRequestEntity(
+                null,
+                missionId,
+                1L,
+                3,
+                null,
+                ReviewRequestType.REQUEST
+        ));
+        GithubUri requestUrl = GithubUri.of("https://github.com" + "/test");
+
+        MvcResult result = mockMvc.perform(
+                RequestBuildersHelper.post("/api/missions/" + missionId + "/reviews/" + reviewRequestEntity.getId())
+                        .nonAuthenticated()
+                        .content(Map.of(
+                                "uri", requestUrl.toUriString()
+                        ))
+        ).andReturn();
+
+        assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
+    }
+
+    @Test
+    void 리뷰신청_취소() throws Exception {
+        Long missionId = missionSaver.save(TestMissionFactory.createMission(null, MissionStatus.ONGOING, 1L));
+        ReviewRequestEntity reviewRequestEntity = reviewRequestRepository.save(new ReviewRequestEntity(
+                null,
+                missionId,
+                1L,
+                3,
+                null,
+                ReviewRequestType.REQUEST
+        ));
+
+        MvcResult result = mockMvc.perform(
+                RequestBuildersHelper.delete("/api/missions/" + missionId + "/reviews/" + reviewRequestEntity.getId())
+                        .authentication("1", "USER")
+        ).andReturn();
+
+        assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+        ReviewRequestEntity resultEntity = reviewRequestRepository.findById(reviewRequestEntity.getId()).get();
+        assertThat(resultEntity.getReviewRequestType()).isEqualTo(ReviewRequestType.CANCEL);
+    }
+
+    @Test
+    void 어드민_리뷰신청_취소() throws Exception {
+        Long missionId = missionSaver.save(TestMissionFactory.createMission(null, MissionStatus.ONGOING, 1L));
+        ReviewRequestEntity reviewRequestEntity = reviewRequestRepository.save(new ReviewRequestEntity(
+                null,
+                missionId,
+                1L,
+                3,
+                null,
+                ReviewRequestType.REQUEST
+        ));
+
+        MvcResult result = mockMvc.perform(
+                RequestBuildersHelper.delete("/api/missions/" + missionId + "/reviews/" + reviewRequestEntity.getId())
+                        .authentication("1", "ADMIN")
+        ).andReturn();
+
+        assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
+    }
+
+    @Test
+    void 비인증회원_리뷰신청_취소() throws Exception {
+        Long missionId = missionSaver.save(TestMissionFactory.createMission(null, MissionStatus.ONGOING, 1L));
+        ReviewRequestEntity reviewRequestEntity = reviewRequestRepository.save(new ReviewRequestEntity(
+                null,
+                missionId,
+                1L,
+                3,
+                null,
+                ReviewRequestType.REQUEST
+        ));
+
+        MvcResult result = mockMvc.perform(
+                RequestBuildersHelper.delete("/api/missions/" + missionId + "/reviews/" + reviewRequestEntity.getId())
+                        .nonAuthenticated()
+        ).andReturn();
+
+        assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
     }
 }

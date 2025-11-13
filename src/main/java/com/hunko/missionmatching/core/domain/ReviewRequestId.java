@@ -6,7 +6,7 @@ public record ReviewRequestId(Long id) {
         return new ReviewRequestId(null);
     }
 
-    public static ReviewRequestId of(Long id){
+    public static ReviewRequestId of(Long id) {
         return new ReviewRequestId(id);
     }
 

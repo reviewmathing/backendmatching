@@ -43,7 +43,8 @@ public class MissionReader {
         return result;
     }
 
-    private static MissionCursor getMissionCursorRequest(MissionStatus pending, MissionCursor missionCursor, int count) {
+    private static MissionCursor getMissionCursorRequest(MissionStatus pending, MissionCursor missionCursor,
+                                                         int count) {
         if (!pending.equals(missionCursor.status())) {
             return MissionCursor.empty(count);
         }

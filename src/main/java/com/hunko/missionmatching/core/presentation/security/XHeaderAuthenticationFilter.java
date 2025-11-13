@@ -28,7 +28,6 @@ public class XHeaderAuthenticationFilter extends OncePerRequestFilter {
         String idValue = request.getHeader(X_USER_ID);
         String roles = request.getHeader(X_USER_ROLE);
 
-
         if (idValue == null || idValue.isEmpty()) {
             filterChain.doFilter(request, response);
             return;
@@ -40,7 +39,7 @@ public class XHeaderAuthenticationFilter extends OncePerRequestFilter {
                     getAuthorities(split));
             SecurityContextHolder.getContext().setAuthentication(xHeaderAuthenticationToken);
             filterChain.doFilter(request, response);
-        }catch (BadCredentialsException e){
+        } catch (BadCredentialsException e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("{\"error\": \"Invalid role\"}");
         }
@@ -53,7 +52,7 @@ public class XHeaderAuthenticationFilter extends OncePerRequestFilter {
         for (String role : roles) {
             try {
                 authorities.add(new SimpleGrantedAuthority(Authorities.findByName(role).toSpringAuth()));
-            }catch (IllegalArgumentException e){
+            } catch (IllegalArgumentException e) {
                 throw new BadCredentialsException("Invalid role");
             }
 

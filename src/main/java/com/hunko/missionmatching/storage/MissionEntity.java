@@ -17,8 +17,8 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(indexes = {
-        @Index(name = "idx_status_end_date_id",columnList = "status,endDate,id"),
-        @Index(name = "idx_status_start_date_id",columnList = "status,startDate,id")
+        @Index(name = "idx_status_end_date_id", columnList = "status,endDate,id"),
+        @Index(name = "idx_status_start_date_id", columnList = "status,startDate,id")
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -36,7 +36,8 @@ public class MissionEntity {
     private String missionUri;
 
     @Builder
-    public MissionEntity(Long id, String title, ZonedDateTime startDate, ZonedDateTime endDate, Long creator, MissionStatus status, String missionUri) {
+    public MissionEntity(Long id, String title, ZonedDateTime startDate, ZonedDateTime endDate, Long creator,
+                         MissionStatus status, String missionUri) {
         this.id = id;
         this.title = title;
         this.startDate = startDate;
