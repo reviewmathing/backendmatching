@@ -1,0 +1,27 @@
+package com.hunko.missionmatching.core.domain;
+
+import com.hunko.missionmatching.core.exception.ErrorType;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+public class ReviewGithubUrlUpdateService {
+
+    private final MissionReader missionReader;
+
+    public ReviewRequest updateGithubUrl(ReviewRequest request, GithubUri githubUri) {
+        MissionId missionId = request.getMissionId();
+        Mission mission = missionReader.readById(missionId.toLong())
+                .orElseThrow(ErrorType.ENTITY_NOT_FOUND::toException);
+
+        if (!MissionStatus.ONGOING.equals(mission.getStatus())) {
+            ErrorType.INVALID_INPUT.throwException();
+        }
+        GithubUri missionUrl = mission.getMissionUrl();
+        if (!missionUrl.isSubUrl(githubUri)) {
+            ErrorType.NOT_SUB_URL_FOR_MISSION.throwException();
+        }
+        request.updateGithubUrl(githubUri);
+        return request;
+    }
+
+}

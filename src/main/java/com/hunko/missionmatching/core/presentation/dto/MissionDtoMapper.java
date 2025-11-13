@@ -1,4 +1,4 @@
-package com.hunko.missionmatching.core.presentation;
+package com.hunko.missionmatching.core.presentation.dto;
 
 import com.hunko.missionmatching.core.domain.Mission;
 

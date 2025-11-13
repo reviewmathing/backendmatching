@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,10 +26,14 @@ public class ReviewRequestEntity {
 
     private Long missionId;
     private Long requesterId;
+    private Integer reviewCount;
+    private String githubUrl;
 
-    public ReviewRequestEntity(Long id, Long missionId, Long requesterId) {
+    public ReviewRequestEntity(Long id, Long missionId, Long requesterId, Integer reviewCount, String githubUrl) {
         this.id = id;
         this.missionId = missionId;
         this.requesterId = requesterId;
+        this.reviewCount = reviewCount;
+        this.githubUrl = githubUrl;
     }
 }

@@ -23,13 +23,16 @@ class MissionTest extends DomainEventUnitTest {
         Creator creator = Creator.of(1L);
         ZonedDateTime startDate = ZonedDateTime.of(2020, 1, 1, 0, 0, 0, 0, ZoneId.systemDefault());
         ZonedDateTime endDate = ZonedDateTime.of(2020, 1, 1, 23, 59, 59, 0, ZoneId.systemDefault());
-        assertThatCode(() -> new Mission("로또", new TimePeriod(startDate, endDate), creator)).doesNotThrowAnyException();
+        GithubUri testUri = GithubUri.of("https://github.com/woowacourse-precourse/java-lotto-8");
+        assertThatCode(() -> new Mission("로또", new TimePeriod(startDate, endDate), creator,
+                testUri)).doesNotThrowAnyException();
     }
 
     @ParameterizedTest
     @MethodSource("createFailArguments")
     void 미션생성실패(String title, ZonedDateTime startDate, ZonedDateTime endDate, Creator creator) {
-        assertThatCode(() -> new Mission(title, new TimePeriod(startDate, endDate), creator)).isInstanceOf(
+        GithubUri testUri = GithubUri.of("https://github.com/woowacourse-precourse/java-lotto-8");
+        assertThatCode(() -> new Mission(title, new TimePeriod(startDate, endDate), creator, testUri)).isInstanceOf(
                 CoreException.class);
     }
 

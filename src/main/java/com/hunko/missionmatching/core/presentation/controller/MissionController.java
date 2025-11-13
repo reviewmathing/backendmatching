@@ -1,9 +1,14 @@
-package com.hunko.missionmatching.core.presentation;
+package com.hunko.missionmatching.core.presentation.controller;
 
 import com.hunko.missionmatching.core.Authorities;
 import com.hunko.missionmatching.core.application.service.MissionService;
 import com.hunko.missionmatching.core.domain.Creator;
 import com.hunko.missionmatching.core.domain.Mission;
+import com.hunko.missionmatching.core.presentation.dto.MissionCursorDto;
+import com.hunko.missionmatching.core.presentation.dto.MissionPageDto;
+import com.hunko.missionmatching.core.presentation.dto.MissionRegisterDto;
+import com.hunko.missionmatching.core.presentation.security.UserId;
+import com.hunko.missionmatching.core.presentation.security.UserRole;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import java.util.List;
@@ -14,7 +19,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,7 +35,7 @@ public class MissionController {
     public Map<String, Long> register(@Validated @RequestBody MissionRegisterDto missionRegisterDto,
                                       @UserId Long userId) {
         Long id = missionService.register(missionRegisterDto.title(), missionRegisterDto.timePeriod(),
-                Creator.of(userId));
+                Creator.of(userId), missionRegisterDto.githubUri());
         return Map.of("id", id);
     }
 

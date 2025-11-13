@@ -1,6 +1,7 @@
 package com.hunko.missionmatching.storage;
 
 import com.hunko.missionmatching.core.domain.Creator;
+import com.hunko.missionmatching.core.domain.GithubUri;
 import com.hunko.missionmatching.core.domain.Mission;
 import com.hunko.missionmatching.core.domain.MissionId;
 import com.hunko.missionmatching.core.domain.TimePeriod;
@@ -16,6 +17,7 @@ public class MissionMapper {
                 .endDate(timePeriod.getEndDate())
                 .creator(mission.getCreator().toLong())
                 .status(mission.getStatus())
+                .missionUri(mission.getMissionUrl().toUriString())
                 .build();
 
     }
@@ -26,7 +28,8 @@ public class MissionMapper {
                 entity.getTitle(),
                 new TimePeriod(entity.getStartDate(), entity.getEndDate()),
                 Creator.of(entity.getCreator()),
-                entity.getStatus()
+                entity.getStatus(),
+                GithubUri.of(entity.getMissionUri())
         );
     }
 }

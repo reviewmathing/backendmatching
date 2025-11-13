@@ -1,5 +1,6 @@
-package com.hunko.missionmatching.core.presentation;
+package com.hunko.missionmatching.core.presentation.config;
 
+import com.hunko.missionmatching.core.presentation.security.AuthenticationExceptionFilter;
 import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

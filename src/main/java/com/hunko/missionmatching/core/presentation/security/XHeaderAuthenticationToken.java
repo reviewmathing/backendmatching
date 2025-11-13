@@ -1,4 +1,4 @@
-package com.hunko.missionmatching.core.presentation;
+package com.hunko.missionmatching.core.presentation.security;
 
 import java.util.Collection;
 import org.springframework.security.core.Authentication;

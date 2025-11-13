@@ -15,10 +15,10 @@ class ReviewRequestSaverTest {
 
     @Test
     void 같은_미션에_두번저장시_예외() throws Exception {
-        reviewRequestSaver.save(new ReviewRequest(new Requester(1L), MissionId.of(1L)));
+        reviewRequestSaver.save(new ReviewRequest(new Requester(1L), MissionId.of(1L), 5));
 
         assertThatThrownBy(
-                () -> reviewRequestSaver.save(new ReviewRequest(new Requester(1L), MissionId.of(1L)))).isInstanceOf(
+                () -> reviewRequestSaver.save(new ReviewRequest(new Requester(1L), MissionId.of(1L), 5))).isInstanceOf(
                 DataIntegrityViolationException.class);
     }
 }

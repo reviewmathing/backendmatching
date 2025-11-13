@@ -3,7 +3,7 @@ package com.hunko.missionmatching.core;
 import static org.awaitility.Awaitility.await;
 
 import com.hunko.missionmatching.core.domain.MissionStatus;
-import com.hunko.missionmatching.core.presentation.MissionRegisterDto;
+import com.hunko.missionmatching.core.presentation.dto.MissionRegisterDto;
 import com.hunko.missionmatching.storage.MissionEntity;
 import com.hunko.missionmatching.storage.MissionRepository;
 import java.time.LocalDateTime;
@@ -44,7 +44,9 @@ class MissionStatusIntegrationTest {
         headers.set("X-User-ID", creator.toString());
         headers.set("X-User-ROLE", "ADMIN");
         headers.setContentType(MediaType.APPLICATION_JSON);
-        MissionRegisterDto missionRegisterDto = new MissionRegisterDto(title, start, end, ZoneId.systemDefault());
+        String missionUri = "https://github.com/woowacourse-precourse/java-lotto-8";
+        MissionRegisterDto missionRegisterDto = new MissionRegisterDto(title, start, end, ZoneId.systemDefault(),
+                missionUri);
         // HttpEntity 생성 (헤더 + 바디)
         HttpEntity<MissionRegisterDto> entity = new HttpEntity<>(missionRegisterDto, headers);
         ResponseEntity<Map> exchange = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);

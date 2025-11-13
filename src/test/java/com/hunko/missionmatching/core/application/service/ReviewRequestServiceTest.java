@@ -19,9 +19,9 @@ class ReviewRequestServiceTest {
     void 정상생성() {
         FakeReviewRequestSaver fakeReviewRequestSaver = new FakeReviewRequestSaver();
         ReviewRequestService reviewRequestService = new ReviewRequestService(new FakeMissionValidator(true),
-                fakeReviewRequestSaver);
+                fakeReviewRequestSaver, null, null);
 
-        Long id = reviewRequestService.request(new Requester(1L), MissionId.of(1L));
+        Long id = reviewRequestService.request(new Requester(1L), MissionId.of(1L), 5);
 
         ReviewRequest request = fakeReviewRequestSaver.getRequest(new ReviewRequestId(id));
         assertThat(request.getRequester()).isEqualTo(new Requester(1L));
@@ -31,9 +31,9 @@ class ReviewRequestServiceTest {
     @Test
     void 존재하지_않는_미션으로_요청() {
         ReviewRequestService reviewRequestService = new ReviewRequestService(new FakeMissionValidator(false),
-                new FakeReviewRequestSaver());
+                new FakeReviewRequestSaver(), null, null);
 
-        assertThatThrownBy(() -> reviewRequestService.request(new Requester(1L), MissionId.of(1L)))
+        assertThatThrownBy(() -> reviewRequestService.request(new Requester(1L), MissionId.of(1L), 5))
                 .isInstanceOf(CoreException.class);
     }
 
@@ -42,9 +42,9 @@ class ReviewRequestServiceTest {
         RuntimeExceptionThrowReviewRequestSaver reviewRequestSaver = new RuntimeExceptionThrowReviewRequestSaver(
                 new DataIntegrityViolationException("test"));
         ReviewRequestService reviewRequestService = new ReviewRequestService(new FakeMissionValidator(false),
-                reviewRequestSaver);
+                reviewRequestSaver, null, null);
 
-        assertThatThrownBy(() -> reviewRequestService.request(new Requester(1L), MissionId.of(1L)))
+        assertThatThrownBy(() -> reviewRequestService.request(new Requester(1L), MissionId.of(1L), 5))
                 .isInstanceOf(CoreException.class);
     }
 

@@ -29,7 +29,8 @@ public class MissionReaderTest {
                 now.plusMinutes(10),
                 now.plusMinutes(12),
                 1L,
-                MissionStatus.PENDING
+                MissionStatus.PENDING,
+                "https://github.com/woowacourse-precourse/java-lotto-8"
         );
         MissionEntity missionEntity2 = new MissionEntity(
                 null,
@@ -37,7 +38,8 @@ public class MissionReaderTest {
                 now.minusDays(1),
                 now.plusMinutes(2),
                 1L,
-                MissionStatus.ONGOING
+                MissionStatus.ONGOING,
+                "https://github.com/woowacourse-precourse/java-lotto-8"
         );
         MissionEntity missionEntity3 = new MissionEntity(
                 null,
@@ -45,7 +47,8 @@ public class MissionReaderTest {
                 now.minusDays(1),
                 now.minusMinutes(1),
                 1L,
-                MissionStatus.COMPLETED
+                MissionStatus.COMPLETED,
+                "https://github.com/woowacourse-precourse/java-lotto-8"
         );
         MissionEntity missionEntity4 = new MissionEntity(
                 null,
@@ -53,7 +56,8 @@ public class MissionReaderTest {
                 now.minusDays(1),
                 now.plusMinutes(2),
                 1L,
-                MissionStatus.ONGOING
+                MissionStatus.ONGOING,
+                "https://github.com/woowacourse-precourse/java-lotto-8"
         );
         missionRepository.saveAll(List.of(missionEntity1, missionEntity2, missionEntity3, missionEntity4));
 

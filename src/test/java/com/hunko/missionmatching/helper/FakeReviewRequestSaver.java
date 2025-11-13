@@ -27,7 +27,9 @@ public class FakeReviewRequestSaver extends ReviewRequestSaver {
                 request.getReviewRequestId().id() == null ? new ReviewRequestId(Long.valueOf(id))
                         : request.getReviewRequestId(),
                 request.getRequester(),
-                request.getMissionId()
+                request.getMissionId(),
+                request.getReviewCount(),
+                null
         );
     }
 

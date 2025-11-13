@@ -8,8 +8,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hunko.missionmatching.core.domain.Mission;
 import com.hunko.missionmatching.core.domain.MissionStatus;
 import com.hunko.missionmatching.core.domain.TestMissionFactory;
-import com.hunko.missionmatching.core.presentation.MissionDto;
-import com.hunko.missionmatching.core.presentation.MissionPageDto;
+import com.hunko.missionmatching.core.presentation.dto.MissionDto;
+import com.hunko.missionmatching.core.presentation.dto.MissionPageDto;
+import com.hunko.missionmatching.helper.RequestBuildersHelper;
 import com.hunko.missionmatching.storage.MissionEntity;
 import com.hunko.missionmatching.storage.MissionMapper;
 import com.hunko.missionmatching.storage.MissionRepository;
@@ -46,11 +47,13 @@ public class MissionIntegrationTest {
         LocalDateTime endDateTime = startDateTime.plusDays(1);
         Long creatorId = 1L;
         String zone = ZoneId.systemDefault().toString();
+        String url = "https://github.com/woowacourse-precourse/java-lotto-8";
         Map<String, ? extends Serializable> requestBody = Map.of(
                 "title", title,
                 "startDateTime", startDateTime,
                 "endDateTime", endDateTime,
-                "zone", zone
+                "zone", zone,
+                "github", url
         );
 
         MvcResult result = mockMvc.perform(
@@ -80,11 +83,13 @@ public class MissionIntegrationTest {
         LocalDateTime endDateTime = startDateTime.plusDays(1);
         Long creatorId = 1L;
         String zone = ZoneId.systemDefault().toString();
+        String url = "https://github.com/woowacourse-precourse/java-lotto-8";
         Map<String, ? extends Serializable> requestBody = Map.of(
                 "title", title,
                 "startDateTime", startDateTime,
                 "endDateTime", endDateTime,
-                "zone", zone
+                "zone", zone,
+                "github", url
         );
 
         MvcResult result = mockMvc.perform(
@@ -103,11 +108,13 @@ public class MissionIntegrationTest {
         LocalDateTime startDateTime = LocalDateTime.now();
         LocalDateTime endDateTime = startDateTime.plusDays(1);
         String zone = ZoneId.systemDefault().toString();
+        String url = "https://github.com/woowacourse-precourse/java-lotto-8";
         Map<String, ? extends Serializable> requestBody = Map.of(
                 "title", title,
                 "startDateTime", startDateTime,
                 "endDateTime", endDateTime,
-                "zone", zone
+                "zone", zone,
+                "github", url
         );
 
         MvcResult result = mockMvc.perform(

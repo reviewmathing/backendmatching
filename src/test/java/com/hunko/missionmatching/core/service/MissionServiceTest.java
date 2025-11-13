@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.hunko.missionmatching.core.Authorities;
 import com.hunko.missionmatching.core.application.service.MissionService;
 import com.hunko.missionmatching.core.domain.Creator;
+import com.hunko.missionmatching.core.domain.GithubUri;
 import com.hunko.missionmatching.core.domain.Mission;
 import com.hunko.missionmatching.core.domain.MissionCompleted;
 import com.hunko.missionmatching.core.domain.MissionCreator;
@@ -38,8 +39,9 @@ class MissionServiceTest extends DomainEventUnitTest {
         ZonedDateTime endDate = ZonedDateTime.of(LocalDateTime.of(2020, 1, 1, 23, 59, 59), ZoneId.systemDefault());
         String title = "test";
         Creator creator = Creator.of(1L);
+        GithubUri testUri = GithubUri.of("https://github.com/woowacourse-precourse/java-lotto-8");
 
-        Long id = missionService.register(title, new TimePeriod(startDate, endDate), creator);
+        Long id = missionService.register(title, new TimePeriod(startDate, endDate), creator, testUri);
 
         Mission mission = fakeMissionSaver.getMission(Integer.parseInt(id.toString()));
         assertThat(mission).isNotNull();
@@ -60,9 +62,11 @@ class MissionServiceTest extends DomainEventUnitTest {
         ZonedDateTime endDate = ZonedDateTime.of(LocalDateTime.of(2020, 1, 1, 23, 59, 59), ZoneId.systemDefault());
         String title = "test";
         Creator creator = Creator.of(1L);
+        GithubUri testUri = GithubUri.of("https://github.com/woowacourse-precourse/java-lotto-8");
 
         assertThatThrownBy(
-                () -> missionService.register(title, new TimePeriod(startDate, endDate), creator)).isInstanceOf(
+                () -> missionService.register(title, new TimePeriod(startDate, endDate), creator,
+                        testUri)).isInstanceOf(
                 CoreException.class);
     }
 

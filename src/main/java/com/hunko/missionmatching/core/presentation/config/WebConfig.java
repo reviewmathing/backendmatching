@@ -1,5 +1,6 @@
-package com.hunko.missionmatching.core.presentation;
+package com.hunko.missionmatching.core.presentation.config;
 
+import com.hunko.missionmatching.core.presentation.security.UserRoleArgumentResolver;
 import java.util.List;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;

@@ -1,8 +1,11 @@
 package com.hunko.missionmatching.core.application.service;
 
+import com.hunko.missionmatching.core.domain.GithubUri;
 import com.hunko.missionmatching.core.domain.MissionId;
 import com.hunko.missionmatching.core.domain.Requester;
+import com.hunko.missionmatching.core.domain.ReviewGithubUrlUpdateService;
 import com.hunko.missionmatching.core.domain.ReviewRequest;
+import com.hunko.missionmatching.core.domain.ReviewRequestId;
 import com.hunko.missionmatching.core.domain.ReviewRequestSaver;
 import com.hunko.missionmatching.core.exception.ErrorType;
 import lombok.RequiredArgsConstructor;
@@ -15,16 +18,29 @@ public class ReviewRequestService {
 
     private final MissionValidator missionValidator;
     private final ReviewRequestSaver reviewRequestSaver;
+    private final ReviewRequestReader reviewRequestReader;
+    private final ReviewGithubUrlUpdateService reviewGithubUrlUpdateService;
 
-    public Long request(Requester requester, MissionId missionId){
-        if(!missionValidator.isInvalidMission(missionId)){
+    public Long request(Requester requester, MissionId missionId, Integer reviewCount) {
+        if (!missionValidator.isInvalidMission(missionId)) {
             ErrorType.INVALID_MISSION.throwException();
         }
-        ReviewRequest request = new ReviewRequest(requester,missionId);
+        ReviewRequest request = new ReviewRequest(requester, missionId, reviewCount);
         try {
             return reviewRequestSaver.save(request);
-        }catch (DataIntegrityViolationException e){
+        } catch (DataIntegrityViolationException e) {
             throw ErrorType.DUPLICATE_REVIEW_REQUEST.toException();
         }
+    }
+
+    public void updateGithubUri(ReviewRequestId reviewRequestId, MissionId missionId, Requester requester,
+                                GithubUri githubUri) {
+        ReviewRequest reviewRequest = reviewRequestReader.loadFrom(requester, reviewRequestId)
+                .orElseThrow(ErrorType.ENTITY_NOT_FOUND::toException);
+        if (!reviewRequest.getMissionId().equals(missionId)) {
+           ErrorType.INVALID_INPUT.throwException();
+        }
+        ReviewRequest request = reviewGithubUrlUpdateService.updateGithubUrl(reviewRequest, githubUri);
+        reviewRequestSaver.save(request);
     }
 }

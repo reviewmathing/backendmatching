@@ -10,10 +10,10 @@ public class MissionCreator {
 
     private final FutureDateSpecification futureDateSpecification;
 
-    public Mission createMission(String title, TimePeriod timePeriod, Creator creator) {
+    public Mission createMission(String title, TimePeriod timePeriod, Creator creator, GithubUri url) {
         if (!futureDateSpecification.isSatisfiedBy(timePeriod)) {
             ErrorType.INVALID_INPUT.throwException();
         }
-        return new Mission(title, timePeriod, creator);
+        return new Mission(title, timePeriod, creator, url);
     }
 }

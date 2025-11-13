@@ -1,4 +1,4 @@
-package com.hunko.missionmatching.core.presentation;
+package com.hunko.missionmatching.core.presentation.security;
 
 import com.hunko.missionmatching.core.Authorities;
 import java.util.Collection;

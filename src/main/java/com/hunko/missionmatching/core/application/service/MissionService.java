@@ -2,6 +2,7 @@ package com.hunko.missionmatching.core.application.service;
 
 import com.hunko.missionmatching.core.Authorities;
 import com.hunko.missionmatching.core.domain.Creator;
+import com.hunko.missionmatching.core.domain.GithubUri;
 import com.hunko.missionmatching.core.domain.MissionCreator;
 import com.hunko.missionmatching.core.domain.MissionReader;
 import com.hunko.missionmatching.core.domain.MissionSaver;
@@ -33,8 +34,8 @@ public class MissionService {
     }
 
     @Transactional
-    public Long register(String title, TimePeriod timePeriod, Creator creator) {
-        Mission mission = missionCreator.createMission(title, timePeriod, creator);
+    public Long register(String title, TimePeriod timePeriod, Creator creator, GithubUri githubUri) {
+        Mission mission = missionCreator.createMission(title, timePeriod, creator, githubUri);
         Long id = missionSaver.save(mission);
         DomainEventPublisher.instance().published(new MissionRegistered(id));
         return id;
