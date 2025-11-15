@@ -21,4 +21,9 @@ public class ReviewRequestReader {
                 requester.toLong(), requestId.toLong());
         return requestEntity.map(ReviewRequestEntityMapper::toReviewRequest);
     }
+
+    public Optional<ReviewRequest> loadFrom(ReviewRequestId requestId) {
+        Optional<ReviewRequestEntity> requestEntity = reviewRequestRepository.findById(requestId.toLong());
+        return requestEntity.map(ReviewRequestEntityMapper::toReviewRequest);
+    }
 }

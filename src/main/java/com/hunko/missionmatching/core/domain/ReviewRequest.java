@@ -42,4 +42,15 @@ public class ReviewRequest {
         }
         this.reviewRequestStatus = ReviewRequestType.CANCEL;
     }
+
+    public void reject() {
+        this.reviewRequestStatus = ReviewRequestType.REJECT;
+    }
+
+    public void matched() {
+        if (!ReviewRequestType.REQUEST.equals(this.reviewRequestStatus)) {
+            ErrorType.INVALID_INPUT.throwException();
+        }
+        this.reviewRequestStatus = ReviewRequestType.MATCHED;
+    }
 }

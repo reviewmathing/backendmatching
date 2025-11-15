@@ -1,28 +1,35 @@
 package com.hunko.missionmatching.core.domain;
 
-import jakarta.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DomainEventPublisher {
 
-    private final EventListener eventListener;
-    private static DomainEventPublisher domainEventPublisher;
+    private static final List<EventListener> defaultEventListeners = new ArrayList<>();
+    private final List<EventListener> eventListeners = new ArrayList<>();
+    private static ThreadLocal<DomainEventPublisher> domainEventPublisher = ThreadLocal.withInitial(DomainEventPublisher::new);
 
-    public DomainEventPublisher(EventListener eventListener) {
-        this.eventListener = eventListener;
+    private DomainEventPublisher() {
+        eventListeners.addAll(defaultEventListeners);
     }
 
-    @PostConstruct
-    public void init() {
-        this.domainEventPublisher = this;
+    public static void addDefaultEventListener(EventListener eventListener) {
+        defaultEventListeners.add(eventListener);
     }
 
     public static DomainEventPublisher instance() {
-        return domainEventPublisher;
+        return domainEventPublisher.get();
     }
 
     public void published(Object event) {
-        eventListener.publish(event);
+        for (EventListener eventListener : eventListeners) {
+            eventListener.publish(event);
+        }
+    }
+
+    public void addListener(EventListener eventListener) {
+        eventListeners.add(eventListener);
     }
 }

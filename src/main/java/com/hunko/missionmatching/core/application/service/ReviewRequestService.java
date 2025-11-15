@@ -11,6 +11,7 @@ import com.hunko.missionmatching.core.exception.ErrorType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -54,5 +55,13 @@ public class ReviewRequestService {
             ErrorType.INVALID_INPUT.throwException();
         }
         return reviewRequest;
+    }
+
+    @Transactional
+    public void matched(ReviewRequestId reviewRequestId) {
+        ReviewRequest request = reviewRequestReader.loadFrom(reviewRequestId)
+                .orElseThrow(ErrorType.ENTITY_NOT_FOUND::toException);
+        request.matched();
+        reviewRequestSaver.save(request);
     }
 }
