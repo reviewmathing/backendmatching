@@ -16,18 +16,22 @@ import com.hunko.missionmatching.core.domain.ReviewRequestId;
 import com.hunko.missionmatching.core.domain.ReviewRequestSaver;
 import com.hunko.missionmatching.core.domain.ReviewRequestType;
 import com.hunko.missionmatching.core.domain.TestMissionFactory;
+import com.hunko.missionmatching.storage.MissionRepository;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
+import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
+@SpringBatchTest
 class MissionListenerTest {
 
     @Autowired
@@ -41,6 +45,14 @@ class MissionListenerTest {
 
     @Autowired
     private ReviewRequestReader reviewRequestReader;
+
+    @Autowired
+    private MissionRepository missionRepository;
+
+    @BeforeEach
+    void setUp() {
+        missionRepository.deleteAll();
+    }
 
     @Test
     void 미션완료시테스트() {
