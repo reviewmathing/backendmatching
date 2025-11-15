@@ -1,6 +1,7 @@
 package com.hunko.missionmatching.core.domain;
 
 import com.hunko.missionmatching.storage.MissionCursor;
+import com.hunko.missionmatching.storage.MissionEntity;
 import com.hunko.missionmatching.storage.MissionMapper;
 import com.hunko.missionmatching.storage.MissionRepository;
 import com.hunko.missionmatching.util.CursorUtil;
@@ -90,5 +91,10 @@ public class MissionReader {
 
     public Optional<Mission> readById(Long id) {
         return missionRepository.findById(id).map(MissionMapper::toMission);
+    }
+
+    public List<Mission> readByIds(List<MissionId> list) {
+        List<MissionEntity> entities = missionRepository.findAllById(list.stream().map(MissionId::toLong).toList());
+        return entities.stream().map(MissionMapper::toMission).toList();
     }
 }
