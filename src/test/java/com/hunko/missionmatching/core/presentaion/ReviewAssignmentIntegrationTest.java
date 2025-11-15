@@ -27,6 +27,7 @@ import com.hunko.missionmatching.helper.RequestBuildersHelper;
 import com.hunko.missionmatching.helper.TestGithubUri;
 import com.hunko.missionmatching.storage.MissionRepository;
 import com.hunko.missionmatching.storage.ReviewAssignmentRepository;
+import com.hunko.missionmatching.storage.ReviewAssignmentRevieweeRepository;
 import com.hunko.missionmatching.storage.ReviewRequestRepository;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -70,17 +71,18 @@ class ReviewAssignmentIntegrationTest {
     @Autowired
     private ReviewAssignmentRepository reviewAssignmentRepository;
 
+    @Autowired
+    private ReviewAssignmentRevieweeRepository reviewAssignmentRevieweeRepository;
+
     @MockitoBean
     private UserService userService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @BeforeEach
     void setUp() {
-        missionRepository.deleteAll();
-        reviewRequestRepository.deleteAll();
+        reviewAssignmentRevieweeRepository.deleteAll();
         reviewAssignmentRepository.deleteAll();
+        reviewRequestRepository.deleteAll();
+        missionRepository.deleteAll();
     }
 
     @Test
