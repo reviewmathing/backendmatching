@@ -28,7 +28,8 @@ public class MatchingService {
             for (Integer idx : revieweeIdx) {
                 ReviewRequest request1 = idMap.get(idx);
                 reviewees.add(new Reviewee(
-                        RevieweeId.of(request1.getRequester().id())
+                        RevieweeId.of(request1.getRequester().id()),
+                        request.getGithubUri()
                 ));
             }
 

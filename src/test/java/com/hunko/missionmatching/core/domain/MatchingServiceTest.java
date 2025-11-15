@@ -2,6 +2,7 @@ package com.hunko.missionmatching.core.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.hunko.missionmatching.helper.TestGithubUri;
 import com.hunko.missionmatching.helper.even.DomainEventUnitTest;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ class MatchingServiceTest extends DomainEventUnitTest {
                         ReviewerId.of(1L),
                         limitTime,
                         List.of(
-                                new Reviewee(RevieweeId.of(3L))
+                                new Reviewee(RevieweeId.of(3L), TestGithubUri.GITHUB_URI)
                         )
                 ),
                 new ReviewAssignment(
@@ -57,7 +58,7 @@ class MatchingServiceTest extends DomainEventUnitTest {
                         ReviewerId.of(2L),
                         limitTime,
                         List.of(
-                                new Reviewee(RevieweeId.of(3L))
+                                new Reviewee(RevieweeId.of(3L),TestGithubUri.GITHUB_URI)
                         )
                 ),
                 new ReviewAssignment(
@@ -65,8 +66,8 @@ class MatchingServiceTest extends DomainEventUnitTest {
                         ReviewerId.of(3L),
                         limitTime,
                         List.of(
-                                new Reviewee(RevieweeId.of(1L)),
-                                new Reviewee(RevieweeId.of(2L))
+                                new Reviewee(RevieweeId.of(1L),TestGithubUri.GITHUB_URI),
+                                new Reviewee(RevieweeId.of(2L),TestGithubUri.GITHUB_URI)
                         )
                 )
         );

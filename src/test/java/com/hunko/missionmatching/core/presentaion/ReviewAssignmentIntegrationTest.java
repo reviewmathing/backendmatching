@@ -1,11 +1,14 @@
 package com.hunko.missionmatching.core.presentaion;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hunko.missionmatching.core.application.service.ReviewAssignmentSaver;
+import com.hunko.missionmatching.core.application.service.UserService;
 import com.hunko.missionmatching.core.domain.Creator;
-import com.hunko.missionmatching.core.domain.GithubUri;
 import com.hunko.missionmatching.core.domain.Mission;
 import com.hunko.missionmatching.core.domain.MissionId;
 import com.hunko.missionmatching.core.domain.MissionReader;
@@ -16,17 +19,26 @@ import com.hunko.missionmatching.core.domain.Reviewee;
 import com.hunko.missionmatching.core.domain.RevieweeId;
 import com.hunko.missionmatching.core.domain.ReviewerId;
 import com.hunko.missionmatching.core.domain.TimePeriod;
+import com.hunko.missionmatching.core.domain.User;
 import com.hunko.missionmatching.core.presentation.dto.ReviewAssigmentDto;
-import com.hunko.missionmatching.core.presentation.dto.ReviewAssigmentDto.ListView;
+import com.hunko.missionmatching.core.presentation.dto.ReviewAssigmentDto.Details;
+import com.hunko.missionmatching.core.presentation.dto.ReviewAssigmentDto.RevieweeDetails;
 import com.hunko.missionmatching.helper.RequestBuildersHelper;
+import com.hunko.missionmatching.helper.TestGithubUri;
+import com.hunko.missionmatching.storage.MissionRepository;
+import com.hunko.missionmatching.storage.ReviewAssignmentRepository;
+import com.hunko.missionmatching.storage.ReviewRequestRepository;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -49,13 +61,34 @@ class ReviewAssignmentIntegrationTest {
     @Autowired
     private ReviewAssignmentReader reviewAssignmentReader;
 
+    @Autowired
+    private MissionRepository missionRepository;
+
+    @Autowired
+    private ReviewRequestRepository reviewRequestRepository;
+
+    @Autowired
+    private ReviewAssignmentRepository reviewAssignmentRepository;
+
+    @MockitoBean
+    private UserService userService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @BeforeEach
+    void setUp() {
+        missionRepository.deleteAll();
+        reviewRequestRepository.deleteAll();
+        reviewAssignmentRepository.deleteAll();
+    }
 
     @Test
     void 리뷰평가그룹조회() throws Exception {
         List<Mission> missions = initMission(20);
         initReviewAssigment(missions.stream().map(Mission::getId).toList());
         MvcResult result = mockMvc.perform(
-                RequestBuildersHelper.get("/api/reviewassigment").
+                RequestBuildersHelper.get("/api/reviewassigments").
                         authentication("1", "USER")
         ).andReturn();
 
@@ -65,6 +98,68 @@ class ReviewAssignmentIntegrationTest {
                 objectMapper.writeValueAsString(
                         new ReviewAssigmentDto.ListView(
                                 reviewAssignmentReader.loadFrom(1L, 0, 20), missions
+                        )
+                )
+        );
+    }
+
+    @Test
+    void 리뷰평가단건() throws Exception {
+        String missionName = "test";
+        Long missionId = missionSaver.save(
+                new Mission(
+                        missionName,
+                        new TimePeriod(
+                                ZonedDateTime.now(),
+                                ZonedDateTime.now().plusDays(1)
+                        ),
+                        Creator.of(1L),
+                        TestGithubUri.GITHUB_URI
+                )
+        );
+        long userId = 1L;
+        ReviewAssignment reviewAssignment = new ReviewAssignment(
+                MissionId.of(missionId),
+                ReviewerId.of(userId),
+                ZonedDateTime.now(),
+                List.of(
+                        new Reviewee(
+                                RevieweeId.of(2L),
+                                TestGithubUri.GITHUB_URI
+                        )
+                )
+        );
+        assignmentSaver.save(List.of(reviewAssignment));
+        String userName = "testUser";
+        when(userService.loadFrom(anyList())).thenReturn(List.of(
+                new User(userId, userName),
+                new User(2L, userName + "2")
+        ));
+
+        MvcResult result = mockMvc.perform(
+                RequestBuildersHelper.get("/api/reviewassigments/1").
+                        authentication(String.valueOf(userId), "USER")
+        ).andReturn();
+
+        assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+        System.out.println(result.getResponse().getContentAsString());
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+        Details details = objectMapper.readValue(result.getResponse().getContentAsString(), Details.class);
+        assertThat(details).isEqualTo(
+                new ReviewAssigmentDto.Details(
+                        missionName,
+                        1L,
+                        reviewAssignment.getReviewAssignmentStatus(),
+                        reviewAssignment.getLimitTime(),
+                        List.of(
+                                new RevieweeDetails(
+                                        1L,
+                                        userName + "2",
+                                        reviewAssignment.getReviewee().getFirst().getGithubUri().toUriString(),
+                                        reviewAssignment.getReviewee().getFirst().getReviewStatus()
+                                )
                         )
                 )
         );
@@ -81,7 +176,7 @@ class ReviewAssignmentIntegrationTest {
                                     ZonedDateTime.now().plusDays(1)
                             ),
                             Creator.of(1L),
-                            GithubUri.of("http://github.com")
+                            TestGithubUri.GITHUB_URI
                     )
             );
             result.add(missionReader.readById(id).get());
@@ -98,7 +193,8 @@ class ReviewAssignmentIntegrationTest {
                     ZonedDateTime.now(),
                     List.of(
                             new Reviewee(
-                                    RevieweeId.of(2L)
+                                    RevieweeId.of(2L),
+                                    TestGithubUri.GITHUB_URI
                             )
                     )
             );

@@ -6,6 +6,7 @@ import com.hunko.missionmatching.storage.ReviewAssignmentRepository;
 import com.hunko.missionmatching.storage.ReviewAssignmentRevieweeEntity;
 import com.hunko.missionmatching.storage.ReviewAssignmentRevieweeRepository;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,5 +30,14 @@ public class ReviewAssignmentReader {
                     .filter(rw -> rw.getReviewAssignmentEntity().equals(ra)).toList();
             return ReviewAssignmentEntityMapper.toReviewAssignment(ra,list);
         });
+    }
+
+    public Optional<ReviewAssignment> loadFrom(Long id) {
+        return reviewAssigmentRepository.findById(id).map(this::toReviewAssignment);
+    }
+
+    private ReviewAssignment toReviewAssignment(ReviewAssignmentEntity reviewAssignmentEntity) {
+        List<ReviewAssignmentRevieweeEntity> revieweeEntities = reviewAssigmentRevieweeRepository.findByReviewAssignmentEntity(reviewAssignmentEntity);
+        return ReviewAssignmentEntityMapper.toReviewAssignment(reviewAssignmentEntity, revieweeEntities);
     }
 }

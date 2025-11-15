@@ -2,6 +2,9 @@ package com.hunko.missionmatching.core.application.service;
 
 import com.hunko.missionmatching.core.domain.ReviewAssignment;
 import com.hunko.missionmatching.core.domain.ReviewAssignmentReader;
+import com.hunko.missionmatching.core.domain.ReviewRequestId;
+import com.hunko.missionmatching.core.domain.ReviewerId;
+import com.hunko.missionmatching.core.exception.ErrorType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -14,5 +17,14 @@ public class ReviewAssigmentService {
 
     public Page<ReviewAssignment> loadFrom(Long userId, Integer page, int limit) {
         return reviewAssignmentReader.loadFrom(userId, page, limit);
+    }
+
+    public ReviewAssignment loadFrom(Long userId, Long reviewassigmentId) {
+        ReviewAssignment reviewAssignment = reviewAssignmentReader.loadFrom(reviewassigmentId).orElseThrow(ErrorType.ENTITY_NOT_FOUND::toException);
+        if(!reviewAssignment.getReviewerId().equals(ReviewerId.of(userId))) {
+            //todo : 추후 예외 수정예정
+            ErrorType.INVALID_INPUT.throwException();
+        }
+        return reviewAssignment;
     }
 }

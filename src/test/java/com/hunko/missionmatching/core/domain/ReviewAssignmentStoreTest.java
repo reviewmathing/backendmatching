@@ -3,6 +3,7 @@ package com.hunko.missionmatching.core.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.hunko.missionmatching.core.application.service.ReviewAssignmentSaver;
+import com.hunko.missionmatching.helper.TestGithubUri;
 import com.hunko.missionmatching.storage.ReviewAssignmentRepository;
 import com.hunko.missionmatching.storage.ReviewAssignmentRevieweeRepository;
 import java.time.ZonedDateTime;
@@ -44,7 +45,8 @@ class ReviewAssignmentStoreTest {
                     ZonedDateTime.now(),
                     List.of(
                             new Reviewee(
-                                    RevieweeId.of(2L)
+                                    RevieweeId.of(2L),
+                                    TestGithubUri.GITHUB_URI
                             )
                     )
             );

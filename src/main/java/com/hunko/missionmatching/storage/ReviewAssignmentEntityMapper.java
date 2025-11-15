@@ -1,5 +1,6 @@
 package com.hunko.missionmatching.storage;
 
+import com.hunko.missionmatching.core.domain.GithubUri;
 import com.hunko.missionmatching.core.domain.MissionId;
 import com.hunko.missionmatching.core.domain.ReviewAssignment;
 import com.hunko.missionmatching.core.domain.Reviewee;
@@ -39,6 +40,7 @@ public class ReviewAssignmentEntityMapper {
                 new Reviewee(
                         r.getId(),
                         RevieweeId.of(r.getRevieweeId()),
+                        GithubUri.of(r.getGitHubUri()),
                         r.getReviewStatus()
                 )
         ).toList();

@@ -15,6 +15,7 @@ public class ReviewAssignmentRevieweeEntityMapper {
                 reviewee.getId(),
                 reviewAssignment,
                 reviewee.getRevieweeId().toLong(),
+                reviewee.getGithubUri().toUriString(),
                 reviewee.getReviewStatus()
         );
     }

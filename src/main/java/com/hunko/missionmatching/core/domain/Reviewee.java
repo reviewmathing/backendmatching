@@ -8,20 +8,22 @@ public class Reviewee {
 
     private final Long id;
     private final RevieweeId revieweeId;
+    private final GithubUri githubUri;
     private final ReviewStatus reviewStatus;
 
-    public Reviewee(Long id, RevieweeId revieweeId, ReviewStatus reviewStatus) {
+    public Reviewee(Long id, RevieweeId revieweeId, GithubUri githubUri, ReviewStatus reviewStatus) {
         this.id = id;
         this.revieweeId = revieweeId;
+        this.githubUri = githubUri;
         this.reviewStatus = reviewStatus;
     }
 
-    public Reviewee(RevieweeId revieweeId, ReviewStatus reviewStatus) {
-        this(null, revieweeId, reviewStatus);
+    public Reviewee(RevieweeId revieweeId, GithubUri githubUri, ReviewStatus reviewStatus) {
+        this(null, revieweeId, githubUri, reviewStatus);
     }
 
-    public Reviewee(RevieweeId revieweeId) {
-        this(revieweeId, ReviewStatus.PENDING);
+    public Reviewee(RevieweeId revieweeId, GithubUri githubUri) {
+        this(revieweeId, githubUri, ReviewStatus.PENDING);
     }
 
     @Override

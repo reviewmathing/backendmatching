@@ -3,10 +3,15 @@ package com.hunko.missionmatching.core.presentation.dto;
 import com.hunko.missionmatching.core.domain.Mission;
 import com.hunko.missionmatching.core.domain.ReviewAssignment;
 import com.hunko.missionmatching.core.domain.ReviewAssignmentStatus;
+import com.hunko.missionmatching.core.domain.ReviewStatus;
+import com.hunko.missionmatching.core.domain.Reviewee;
+import com.hunko.missionmatching.core.domain.User;
+import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.data.domain.Page;
 
 @NoArgsConstructor
@@ -47,6 +52,71 @@ public class ReviewAssigmentDto {
             this.missionName = missionName;
             this.status = status;
             this.reviewAssigmentId = reviewAssigmentId;
+        }
+    }
+
+    @EqualsAndHashCode(callSuper = false)
+    @Getter
+    @NoArgsConstructor
+    @ToString
+    public static class Details {
+        private String missionName;
+        private Long reviewAssigmentId;
+        private ReviewAssignmentStatus status;
+        private ZonedDateTime limitTime;
+        private List<RevieweeDetails> revieweeDetails;
+
+        public Details(String missionName, Long reviewAssigmentId, ReviewAssignmentStatus status,
+                       ZonedDateTime limitTime,
+                       List<RevieweeDetails> revieweeDetails) {
+            this.missionName = missionName;
+            this.reviewAssigmentId = reviewAssigmentId;
+            this.status = status;
+            this.limitTime = limitTime;
+            this.revieweeDetails = revieweeDetails;
+        }
+
+        public static Details of(ReviewAssignment reviewAssignment,String missionName ,List<User> users){
+            List<RevieweeDetails> details = toRevieweeDetails(reviewAssignment.getReviewee(), users);
+            return new Details(
+                    missionName,
+                    reviewAssignment.getId(),
+                    reviewAssignment.getReviewAssignmentStatus(),
+                    reviewAssignment.getLimitTime(),
+                    details
+            );
+        }
+
+        private static List<RevieweeDetails> toRevieweeDetails(List<Reviewee> revieweeList,List<User> users){
+            return revieweeList.stream().map(r->{
+                String name = users.stream().filter(u -> u.getUserId().equals(r.getRevieweeId().toLong())).map(
+                        User::getName
+                ).findAny().orElseGet(() -> "Unknown");
+                return new RevieweeDetails(
+                        r.getId(),
+                        name,
+                        r.getGithubUri().toUriString(),
+                        r.getReviewStatus()
+                );
+            }).toList();
+        }
+    }
+
+    @EqualsAndHashCode
+    @Getter
+    @NoArgsConstructor
+    @ToString
+    public static class RevieweeDetails {
+        private Long revieweeAssigmentId;
+        private String userName;
+        private String githubUri;
+        private ReviewStatus status;
+
+        public RevieweeDetails(Long revieweeAssigmentId, String userName, String githubUri, ReviewStatus status) {
+            this.revieweeAssigmentId = revieweeAssigmentId;
+            this.userName = userName;
+            this.githubUri = githubUri;
+            this.status = status;
         }
     }
 }

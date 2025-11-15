@@ -25,14 +25,16 @@ public class ReviewAssignmentRevieweeEntity {
     @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private ReviewAssignmentEntity reviewAssignmentEntity;
     private Long revieweeId;
+    private String gitHubUri;
     @Enumerated(EnumType.STRING)
     private ReviewStatus reviewStatus;
 
-    public ReviewAssignmentRevieweeEntity(Long id, ReviewAssignmentEntity reviewAssignmentEntity, Long revieweeId,
+    public ReviewAssignmentRevieweeEntity(Long id, ReviewAssignmentEntity reviewAssignmentEntity, Long revieweeId,String githubUri,
                                           ReviewStatus reviewStatus) {
         this.id = id;
         this.reviewAssignmentEntity = reviewAssignmentEntity;
         this.revieweeId = revieweeId;
+        this.gitHubUri = githubUri;
         this.reviewStatus = reviewStatus;
     }
 }
