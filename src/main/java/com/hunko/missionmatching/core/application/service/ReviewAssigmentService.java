@@ -5,6 +5,8 @@ import com.hunko.missionmatching.core.domain.ReviewAssignmentReader;
 import com.hunko.missionmatching.core.domain.RevieweeId;
 import com.hunko.missionmatching.core.domain.ReviewerId;
 import com.hunko.missionmatching.core.exception.ErrorType;
+import com.hunko.missionmatching.util.ServerTime;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,14 +17,16 @@ import org.springframework.stereotype.Service;
 public class ReviewAssigmentService {
 
     private final ReviewAssignmentReader reviewAssignmentReader;
+    private final ReviewAssignmentSaver reviewAssignmentSaver;
 
     public Page<ReviewAssignment> loadFrom(Long userId, Integer page, int limit) {
         return reviewAssignmentReader.loadFrom(userId, page, limit);
     }
 
     public ReviewAssignment loadFrom(Long userId, Long reviewassigmentId) {
-        ReviewAssignment reviewAssignment = reviewAssignmentReader.loadFrom(reviewassigmentId).orElseThrow(ErrorType.ENTITY_NOT_FOUND::toException);
-        if(!reviewAssignment.getReviewerId().equals(ReviewerId.of(userId))) {
+        ReviewAssignment reviewAssignment = reviewAssignmentReader.loadFrom(reviewassigmentId)
+                .orElseThrow(ErrorType.ENTITY_NOT_FOUND::toException);
+        if (!reviewAssignment.getReviewerId().equals(ReviewerId.of(userId))) {
             //todo : 추후 예외 수정예정
             ErrorType.INVALID_INPUT.throwException();
         }
@@ -31,5 +35,17 @@ public class ReviewAssigmentService {
 
     public List<ReviewAssignment> loadAssignmentsFrom(RevieweeId revieweeId) {
         return reviewAssignmentReader.loadAssignmentsFrom(revieweeId);
+    }
+
+    public void complete(Long assigmentId, ReviewerId reviewerId, Long revieweeId) {
+        ReviewAssignment reviewAssignment = reviewAssignmentReader.loadFrom(assigmentId)
+                .orElseThrow(ErrorType.ENTITY_NOT_FOUND::toException);
+        if (!reviewAssignment.getReviewerId().equals(reviewerId)) {
+            //todo : 추후 수정예정
+            ErrorType.INVALID_INPUT.throwException();
+        }
+        LocalDateTime now = ServerTime.now();
+        reviewAssignment.completeReview(now, revieweeId);
+        reviewAssignmentSaver.save(reviewAssignment);
     }
 }

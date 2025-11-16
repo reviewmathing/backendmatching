@@ -27,7 +27,7 @@ public class ReviewAssignmentSaver {
         List<ReviewAssignmentRevieweeEntity> revieweeEntities = new ArrayList<>();
         for (ReviewAssignment reviewAssignment : reviewAssignments) {
             ReviewAssignmentEntity entity = ReviewAssignmentEntityMapper.toEntity(reviewAssignment);
-            List<Reviewee> reviewee = reviewAssignment.getReviewee();
+            List<Reviewee> reviewee = reviewAssignment.getReviewees();
             List<ReviewAssignmentRevieweeEntity> revieweeEntities1 = ReviewAssignmentRevieweeEntityMapper.toEntities(entity, reviewee);
 
             reviewAssignmentEntities.add(entity);
@@ -36,5 +36,13 @@ public class ReviewAssignmentSaver {
 
         reviewAssignmentRepository.saveAll(reviewAssignmentEntities);
         reviewAssignmentRevieweeRepository.saveAll(revieweeEntities);
+    }
+
+    public void save(ReviewAssignment reviewAssignment) {
+        ReviewAssignmentEntity entity = ReviewAssignmentEntityMapper.toEntity(reviewAssignment);
+        reviewAssignmentRepository.save(entity);
+        List<Reviewee> reviewee = reviewAssignment.getReviewees();
+        List<ReviewAssignmentRevieweeEntity> revieweeEntities1 = ReviewAssignmentRevieweeEntityMapper.toEntities(entity, reviewee);
+        reviewAssignmentRevieweeRepository.saveAll(revieweeEntities1);
     }
 }

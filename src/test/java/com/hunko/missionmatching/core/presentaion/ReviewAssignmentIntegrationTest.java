@@ -160,8 +160,8 @@ class ReviewAssignmentIntegrationTest {
                                 new RevieweeDetails(
                                         1L,
                                         userName + "2",
-                                        reviewAssignment.getReviewee().getFirst().getGithubUri().toUriString(),
-                                        reviewAssignment.getReviewee().getFirst().getReviewStatus()
+                                        reviewAssignment.getReviewees().getFirst().getGithubUri().toUriString(),
+                                        reviewAssignment.getReviewees().getFirst().getReviewStatus()
                                 )
                         )
                 )

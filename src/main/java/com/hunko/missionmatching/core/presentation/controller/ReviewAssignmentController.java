@@ -12,6 +12,7 @@ import com.hunko.missionmatching.core.domain.UserReader;
 import com.hunko.missionmatching.core.presentation.dto.ReviewAssigmentDto;
 import com.hunko.missionmatching.core.presentation.security.UserId;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -52,8 +54,15 @@ public class ReviewAssignmentController {
                 RevieweeId.of(reviewassigmentId));
         String missionName = missionReader.readById(reviewAssignment.getMissionId().toLong()).map(Mission::getTitle)
                 .orElseGet(() -> "Unknown");
-        List<User> users = userReader.loadFrom(toUserIds(reviewerAssignment, reviewAssignment.getReviewee()));
+        List<User> users = userReader.loadFrom(toUserIds(reviewerAssignment, reviewAssignment.getReviewees()));
         return ReviewAssigmentDto.Details.of(reviewAssignment, reviewerAssignment, missionName, users);
+    }
+
+    @PatchMapping("{reviewassigmentId}/reviewee/{revieweeId}")
+    public void completeReview(@UserId Long userId, @Validated @PathVariable @NotNull Long reviewassigmentId,
+                               @Validated @PathVariable @NotNull Long revieweeId) {
+
+        reviewAssigmentService.complete(reviewassigmentId, ReviewerId.of(userId), revieweeId);
     }
 
     private List<Long> toUserIds(List<ReviewAssignment> reviewAssignments, List<Reviewee> reviewees) {

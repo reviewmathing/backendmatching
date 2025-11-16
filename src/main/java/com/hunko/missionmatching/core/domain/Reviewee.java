@@ -9,7 +9,7 @@ public class Reviewee {
     private final Long id;
     private final RevieweeId revieweeId;
     private final GithubUri githubUri;
-    private final ReviewStatus reviewStatus;
+    private ReviewStatus reviewStatus;
 
     public Reviewee(Long id, RevieweeId revieweeId, GithubUri githubUri, ReviewStatus reviewStatus) {
         this.id = id;
@@ -24,6 +24,10 @@ public class Reviewee {
 
     public Reviewee(RevieweeId revieweeId, GithubUri githubUri) {
         this(revieweeId, githubUri, ReviewStatus.PENDING);
+    }
+
+    public void complete() {
+        this.reviewStatus = ReviewStatus.COMPLETED;
     }
 
     @Override

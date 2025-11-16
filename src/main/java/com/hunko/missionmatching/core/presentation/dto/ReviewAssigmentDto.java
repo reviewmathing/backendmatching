@@ -82,7 +82,7 @@ public class ReviewAssigmentDto {
 
         public static Details of(ReviewAssignment reviewAssignment, List<ReviewAssignment> reviewer, String missionName,
                                  List<User> users) {
-            List<RevieweeDetails> details = toRevieweeDetails(reviewAssignment.getReviewee(), users);
+            List<RevieweeDetails> details = toRevieweeDetails(reviewAssignment.getReviewees(), users);
             List<ReviewerDetails> reviewerDetails = toReviewerDetails(reviewAssignment.getReviewerId(), reviewer,
                     users);
             return new Details(
@@ -115,7 +115,7 @@ public class ReviewAssigmentDto {
                 String name = users.stream().filter(u -> u.getUserId().equals(reviewerId.toLong())).map(
                         User::getName
                 ).findAny().orElseGet(() -> "Unknown");
-                ReviewStatus reviewStatus = r.getReviewee().stream()
+                ReviewStatus reviewStatus = r.getReviewees().stream()
                         .filter(rw -> rw.getRevieweeId().toLong().equals(myId.toLong())).map(Reviewee::getReviewStatus)
                         .findAny().orElse(null);
                 return new ReviewerDetails(
