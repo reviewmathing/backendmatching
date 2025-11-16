@@ -19,8 +19,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class XHeaderAuthenticationFilter extends OncePerRequestFilter {
 
 
-    private static final String X_USER_ROLE = "X-User-ROLE";
-    private static final String X_USER_ID = "X-User-ID";
+    private static final String X_USER_ROLE = "X-User-Role";
+    private static final String X_USER_ID = "X-User-Id";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
