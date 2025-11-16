@@ -2,9 +2,10 @@ package com.hunko.missionmatching.core.application.service;
 
 import com.hunko.missionmatching.core.domain.ReviewAssignment;
 import com.hunko.missionmatching.core.domain.ReviewAssignmentReader;
-import com.hunko.missionmatching.core.domain.ReviewRequestId;
+import com.hunko.missionmatching.core.domain.RevieweeId;
 import com.hunko.missionmatching.core.domain.ReviewerId;
 import com.hunko.missionmatching.core.exception.ErrorType;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -26,5 +27,9 @@ public class ReviewAssigmentService {
             ErrorType.INVALID_INPUT.throwException();
         }
         return reviewAssignment;
+    }
+
+    public List<ReviewAssignment> loadAssignmentsFrom(RevieweeId revieweeId) {
+        return reviewAssignmentReader.loadAssignmentsFrom(revieweeId);
     }
 }

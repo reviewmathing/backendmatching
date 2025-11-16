@@ -5,6 +5,7 @@ import com.hunko.missionmatching.core.domain.ReviewAssignment;
 import com.hunko.missionmatching.core.domain.ReviewAssignmentStatus;
 import com.hunko.missionmatching.core.domain.ReviewStatus;
 import com.hunko.missionmatching.core.domain.Reviewee;
+import com.hunko.missionmatching.core.domain.ReviewerId;
 import com.hunko.missionmatching.core.domain.User;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -64,31 +65,38 @@ public class ReviewAssigmentDto {
         private Long reviewAssigmentId;
         private ReviewAssignmentStatus status;
         private ZonedDateTime limitTime;
+        private List<ReviewerDetails> reviewerDetails;
         private List<RevieweeDetails> revieweeDetails;
 
         public Details(String missionName, Long reviewAssigmentId, ReviewAssignmentStatus status,
                        ZonedDateTime limitTime,
+                       List<ReviewerDetails> reviewerDetails,
                        List<RevieweeDetails> revieweeDetails) {
             this.missionName = missionName;
             this.reviewAssigmentId = reviewAssigmentId;
             this.status = status;
             this.limitTime = limitTime;
+            this.reviewerDetails = reviewerDetails;
             this.revieweeDetails = revieweeDetails;
         }
 
-        public static Details of(ReviewAssignment reviewAssignment,String missionName ,List<User> users){
+        public static Details of(ReviewAssignment reviewAssignment, List<ReviewAssignment> reviewer, String missionName,
+                                 List<User> users) {
             List<RevieweeDetails> details = toRevieweeDetails(reviewAssignment.getReviewee(), users);
+            List<ReviewerDetails> reviewerDetails = toReviewerDetails(reviewAssignment.getReviewerId(), reviewer,
+                    users);
             return new Details(
                     missionName,
                     reviewAssignment.getId(),
                     reviewAssignment.getReviewAssignmentStatus(),
                     reviewAssignment.getLimitTime(),
+                    reviewerDetails,
                     details
             );
         }
 
-        private static List<RevieweeDetails> toRevieweeDetails(List<Reviewee> revieweeList,List<User> users){
-            return revieweeList.stream().map(r->{
+        private static List<RevieweeDetails> toRevieweeDetails(List<Reviewee> revieweeList, List<User> users) {
+            return revieweeList.stream().map(r -> {
                 String name = users.stream().filter(u -> u.getUserId().equals(r.getRevieweeId().toLong())).map(
                         User::getName
                 ).findAny().orElseGet(() -> "Unknown");
@@ -97,6 +105,23 @@ public class ReviewAssigmentDto {
                         name,
                         r.getGithubUri().toUriString(),
                         r.getReviewStatus()
+                );
+            }).toList();
+        }
+
+        private static List<ReviewerDetails> toReviewerDetails(ReviewerId myId, List<ReviewAssignment> reviewerIds, List<User> users) {
+            return reviewerIds.stream().map(r -> {
+                ReviewerId reviewerId = r.getReviewerId();
+                String name = users.stream().filter(u -> u.getUserId().equals(reviewerId.toLong())).map(
+                        User::getName
+                ).findAny().orElseGet(() -> "Unknown");
+                ReviewStatus reviewStatus = r.getReviewee().stream()
+                        .filter(rw -> rw.getRevieweeId().toLong().equals(myId.toLong())).map(Reviewee::getReviewStatus)
+                        .findAny().orElse(null);
+                return new ReviewerDetails(
+                        reviewerId.toLong(),
+                        name,
+                        reviewStatus
                 );
             }).toList();
         }
@@ -116,6 +141,22 @@ public class ReviewAssigmentDto {
             this.revieweeAssigmentId = revieweeAssigmentId;
             this.userName = userName;
             this.githubUri = githubUri;
+            this.status = status;
+        }
+    }
+
+    @EqualsAndHashCode
+    @Getter
+    @NoArgsConstructor
+    @ToString
+    public static class ReviewerDetails {
+        private Long reviewerId;
+        private String userName;
+        private ReviewStatus status;
+
+        public ReviewerDetails(Long reviewerId, String userName, ReviewStatus status) {
+            this.reviewerId = reviewerId;
+            this.userName = userName;
             this.status = status;
         }
     }

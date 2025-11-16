@@ -35,8 +35,13 @@ public class ReviewAssignmentEntityMapper {
         );
     }
 
-    private static List<Reviewee> toReviewee(List<ReviewAssignmentRevieweeEntity> reviewees){
-        return reviewees.stream().map(r->
+    public static ReviewAssignment toReviewAssignment(ReviewAssignmentRevieweeEntity reviewAssignmentRevieweeEntity) {
+        ReviewAssignmentEntity reviewAssignmentEntity = reviewAssignmentRevieweeEntity.getReviewAssignmentEntity();
+        return toReviewAssignment(reviewAssignmentEntity, List.of(reviewAssignmentRevieweeEntity));
+    }
+
+    private static List<Reviewee> toReviewee(List<ReviewAssignmentRevieweeEntity> reviewees) {
+        return reviewees.stream().map(r ->
                 new Reviewee(
                         r.getId(),
                         RevieweeId.of(r.getRevieweeId()),

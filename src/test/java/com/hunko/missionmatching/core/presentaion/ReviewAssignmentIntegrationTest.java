@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hunko.missionmatching.core.application.service.ReviewAssignmentSaver;
-import com.hunko.missionmatching.core.application.service.UserService;
 import com.hunko.missionmatching.core.domain.Creator;
 import com.hunko.missionmatching.core.domain.Mission;
 import com.hunko.missionmatching.core.domain.MissionId;
@@ -20,6 +19,7 @@ import com.hunko.missionmatching.core.domain.RevieweeId;
 import com.hunko.missionmatching.core.domain.ReviewerId;
 import com.hunko.missionmatching.core.domain.TimePeriod;
 import com.hunko.missionmatching.core.domain.User;
+import com.hunko.missionmatching.core.domain.UserReader;
 import com.hunko.missionmatching.core.presentation.dto.ReviewAssigmentDto;
 import com.hunko.missionmatching.core.presentation.dto.ReviewAssigmentDto.Details;
 import com.hunko.missionmatching.core.presentation.dto.ReviewAssigmentDto.RevieweeDetails;
@@ -75,7 +75,7 @@ class ReviewAssignmentIntegrationTest {
     private ReviewAssignmentRevieweeRepository reviewAssignmentRevieweeRepository;
 
     @MockitoBean
-    private UserService userService;
+    private UserReader userReader;
 
     @BeforeEach
     void setUp() {
@@ -133,9 +133,9 @@ class ReviewAssignmentIntegrationTest {
         );
         assignmentSaver.save(List.of(reviewAssignment));
         String userName = "testUser";
-        when(userService.loadFrom(anyList())).thenReturn(List.of(
-                new User(userId, userName),
-                new User(2L, userName + "2")
+        when(userReader.loadFrom(anyList())).thenReturn(List.of(
+                new User(userId, userName, 0, 0),
+                new User(2L, userName + "2", 0, 0)
         ));
 
         MvcResult result = mockMvc.perform(
@@ -155,6 +155,7 @@ class ReviewAssignmentIntegrationTest {
                         1L,
                         reviewAssignment.getReviewAssignmentStatus(),
                         reviewAssignment.getLimitTime(),
+                        List.of(),
                         List.of(
                                 new RevieweeDetails(
                                         1L,

@@ -4,6 +4,7 @@ import com.hunko.missionmatching.storage.ReviewAssignmentEntity;
 import com.hunko.missionmatching.storage.ReviewAssignmentEntityMapper;
 import com.hunko.missionmatching.storage.ReviewAssignmentRepository;
 import com.hunko.missionmatching.storage.ReviewAssignmentRevieweeEntity;
+import com.hunko.missionmatching.storage.ReviewAssignmentRevieweeEntityMapper;
 import com.hunko.missionmatching.storage.ReviewAssignmentRevieweeRepository;
 import java.util.List;
 import java.util.Optional;
@@ -39,5 +40,10 @@ public class ReviewAssignmentReader {
     private ReviewAssignment toReviewAssignment(ReviewAssignmentEntity reviewAssignmentEntity) {
         List<ReviewAssignmentRevieweeEntity> revieweeEntities = reviewAssigmentRevieweeRepository.findByReviewAssignmentEntity(reviewAssignmentEntity);
         return ReviewAssignmentEntityMapper.toReviewAssignment(reviewAssignmentEntity, revieweeEntities);
+    }
+
+    public List<ReviewAssignment> loadAssignmentsFrom(RevieweeId revieweeId) {
+        List<ReviewAssignmentRevieweeEntity> reviewee = reviewAssigmentRevieweeRepository.findByRevieweeId(revieweeId.toLong());
+        return reviewee.stream().map(ReviewAssignmentEntityMapper::toReviewAssignment).toList();
     }
 }

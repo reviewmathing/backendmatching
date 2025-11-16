@@ -1,17 +1,19 @@
 package com.hunko.missionmatching.core.presentation.controller;
 
 import com.hunko.missionmatching.core.application.service.ReviewAssigmentService;
-import com.hunko.missionmatching.core.application.service.UserService;
 import com.hunko.missionmatching.core.domain.Mission;
 import com.hunko.missionmatching.core.domain.MissionReader;
 import com.hunko.missionmatching.core.domain.ReviewAssignment;
 import com.hunko.missionmatching.core.domain.Reviewee;
 import com.hunko.missionmatching.core.domain.RevieweeId;
+import com.hunko.missionmatching.core.domain.ReviewerId;
 import com.hunko.missionmatching.core.domain.User;
+import com.hunko.missionmatching.core.domain.UserReader;
 import com.hunko.missionmatching.core.presentation.dto.ReviewAssigmentDto;
 import com.hunko.missionmatching.core.presentation.security.UserId;
 import jakarta.validation.constraints.Min;
 import java.util.List;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ReviewAssignmentController {
 
-    private final UserService userService;
+    private final UserReader userReader;
     private final ReviewAssigmentService reviewAssigmentService;
     private final MissionReader missionReader;
 
@@ -46,10 +48,20 @@ public class ReviewAssignmentController {
     public ReviewAssigmentDto.Details load(@UserId Long userId,
                                            @PathVariable("reviewassigmentId") Long reviewassigmentId) {
         ReviewAssignment reviewAssignment = reviewAssigmentService.loadFrom(userId, reviewassigmentId);
+        List<ReviewAssignment> reviewerAssignment = reviewAssigmentService.loadAssignmentsFrom(
+                RevieweeId.of(reviewassigmentId));
         String missionName = missionReader.readById(reviewAssignment.getMissionId().toLong()).map(Mission::getTitle)
                 .orElseGet(() -> "Unknown");
-        List<User> users = userService.loadFrom(
-                reviewAssignment.getReviewee().stream().map(Reviewee::getRevieweeId).map(RevieweeId::toLong).toList());
-        return ReviewAssigmentDto.Details.of(reviewAssignment, missionName, users);
+        List<User> users = userReader.loadFrom(toUserIds(reviewerAssignment, reviewAssignment.getReviewee()));
+        return ReviewAssigmentDto.Details.of(reviewAssignment, reviewerAssignment, missionName, users);
+    }
+
+    private List<Long> toUserIds(List<ReviewAssignment> reviewAssignments, List<Reviewee> reviewees) {
+        List<Long> revieweeIds = reviewees.stream().map(Reviewee::getRevieweeId).map(RevieweeId::toLong).toList();
+        List<Long> reviewerIds = reviewAssignments.stream().map(ReviewAssignment::getReviewerId).map(ReviewerId::toLong)
+                .toList();
+        return Stream.concat(revieweeIds.stream(), reviewerIds.stream())
+                .distinct()
+                .toList();
     }
 }

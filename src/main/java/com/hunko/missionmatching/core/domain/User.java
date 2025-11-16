@@ -9,4 +9,6 @@ public class User {
 
     private final Long userId;
     private final String name;
+    private final int unreviewedCount;
+    private final int allowedReportCount;
 }

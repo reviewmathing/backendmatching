@@ -1,5 +1,6 @@
 package com.hunko.missionmatching.storage;
 
+import com.hunko.missionmatching.core.domain.ReviewAssignment;
 import com.hunko.missionmatching.core.domain.Reviewee;
 import java.util.List;
 
@@ -19,4 +20,5 @@ public class ReviewAssignmentRevieweeEntityMapper {
                 reviewee.getReviewStatus()
         );
     }
+
 }
