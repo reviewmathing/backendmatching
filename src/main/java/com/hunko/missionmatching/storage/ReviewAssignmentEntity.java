@@ -34,4 +34,8 @@ public class ReviewAssignmentEntity {
         this.limitTime = limitTime;
         this.reviewAssignmentStatus = reviewAssignmentStatus;
     }
+
+    public void setStatus(ReviewAssignmentStatus reviewAssignmentStatus) {
+        this.reviewAssignmentStatus = reviewAssignmentStatus;
+    }
 }

@@ -1,6 +1,7 @@
 package com.hunko.missionmatching.core.scheduler;
 
 import com.hunko.missionmatching.core.domain.Mission;
+import com.hunko.missionmatching.util.ServerTime;
 import java.time.LocalDateTime;
 import java.util.concurrent.DelayQueue;
 import java.util.concurrent.Delayed;
@@ -51,7 +52,7 @@ public abstract class MissionScheduler {
 
         @Override
         public long getDelay(TimeUnit unit) {
-            long diffMillis = java.time.Duration.between(LocalDateTime.now(), time).toMinutes();
+            long diffMillis = java.time.Duration.between(ServerTime.now(), time).toMinutes();
             return unit.convert(diffMillis, TimeUnit.MINUTES);
         }
 

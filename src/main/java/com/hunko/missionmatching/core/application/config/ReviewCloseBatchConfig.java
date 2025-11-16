@@ -1,13 +1,12 @@
 package com.hunko.missionmatching.core.application.config;
 
-import com.hunko.missionmatching.core.domain.ReviewRequest;
-import com.hunko.missionmatching.storage.ReviewRequestEntity;
-import com.hunko.missionmatching.storage.ReviewRequestEntityMapper;
+import com.hunko.missionmatching.core.domain.ReviewAssignment;
+import com.hunko.missionmatching.core.domain.ReviewAssignmentStatus;
+import com.hunko.missionmatching.storage.ReviewAssignmentEntity;
+import com.hunko.missionmatching.storage.ReviewAssignmentEntityMapper;
 import jakarta.persistence.EntityManagerFactory;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -26,8 +25,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @RequiredArgsConstructor
-public class BatchConfig {
-
+public class ReviewCloseBatchConfig {
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
@@ -35,57 +33,50 @@ public class BatchConfig {
     @Value("${chunkSize:1000}")
     private int chunkSize;
 
-    @Bean
-    public Job updateRejectJob() {
-        return new JobBuilder("updateRejectJob", jobRepository)
-                .start(reviewMatchingStep())
+    @Bean(name = "assignmentCloseJob")
+    public Job assignmentCloseJob() {
+        return new JobBuilder("assignmentCloseJob", jobRepository)
+                .start(assignmentCloseStep())
                 .build();
     }
 
     @Bean
-    public Step reviewMatchingStep() {
-        return new StepBuilder("rejectStep", jobRepository)
-                .<ReviewRequestEntity, ReviewRequestEntity>chunk(chunkSize, transactionManager)
-                .reader(reviewEntityreader(null))
-                .processor(rejectProcess())
-                .writer(writer())
+    public Step assignmentCloseStep() {
+        return new StepBuilder("closeStep", jobRepository)
+                .<ReviewAssignmentEntity, ReviewAssignmentEntity>chunk(chunkSize, transactionManager)
+                .reader(reviewAssignmentBatchReader(null))
+                .processor(closeProcess())
+                .writer(reviewAssignmentWriter())
                 .build();
-    }
-
-    @Bean
-    public ExecutorService batchMatchExcutorService(){
-        return Executors.newFixedThreadPool(4);
     }
 
     @Bean
     @StepScope
-    public JpaPagingItemReader<ReviewRequestEntity> reviewEntityreader(
+    public JpaPagingItemReader<ReviewAssignmentEntity> reviewAssignmentBatchReader(
             @Value("#{jobParameters['missionId']}") Long missionId) {
-
         Map<String, Object> parameters = new LinkedHashMap<>();
         parameters.put("missionId", missionId);
 
-        JpaPagingItemReader<ReviewRequestEntity> reader = new JpaPagingItemReader<>();
+        JpaPagingItemReader<ReviewAssignmentEntity> reader = new JpaPagingItemReader<>();
         reader.setEntityManagerFactory(entityManagerFactory);
-        reader.setQueryString("select r From ReviewRequestEntity r where r.missionId = :missionId and r.reviewRequestType = REQUEST");
+        reader.setQueryString("select r from ReviewAssignmentEntity r where r.missionId = :missionId and r.reviewAssignmentStatus = NOT_CLEARED");
         reader.setParameterValues(parameters);
         reader.setPageSize(chunkSize);
-
         return reader;
     }
 
     @Bean
-    public ItemProcessor<ReviewRequestEntity, ReviewRequestEntity> rejectProcess() {
+    public ItemProcessor<ReviewAssignmentEntity, ReviewAssignmentEntity> closeProcess() {
         return item -> {
-            ReviewRequest domain = ReviewRequestEntityMapper.toReviewRequest(item);
-            if(domain.getGithubUri() == null) domain.reject();
-            return ReviewRequestEntityMapper.toEntity(domain);
+            ReviewAssignment reviewAssignment = ReviewAssignmentEntityMapper.toReviewAssignment(item);
+            reviewAssignment.timeOut();
+            return ReviewAssignmentEntityMapper.toEntity(reviewAssignment);
         };
     }
 
     @Bean
-    public ItemWriter<ReviewRequestEntity> writer () {
-        JpaItemWriter<ReviewRequestEntity> writer = new JpaItemWriter<>();
+    public ItemWriter<ReviewAssignmentEntity> reviewAssignmentWriter() {
+        JpaItemWriter<ReviewAssignmentEntity> writer = new JpaItemWriter<>();
         writer.setEntityManagerFactory(entityManagerFactory);
         return writer;
     }

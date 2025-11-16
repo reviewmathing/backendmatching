@@ -50,4 +50,8 @@ public class ReviewAssignmentEntityMapper {
                 )
         ).toList();
     }
+
+    public static ReviewAssignment toReviewAssignment(ReviewAssignmentEntity entity) {
+        return toReviewAssignment(entity, List.of());
+    }
 }
