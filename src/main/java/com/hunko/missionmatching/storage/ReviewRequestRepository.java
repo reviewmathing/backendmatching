@@ -8,4 +8,6 @@ public interface ReviewRequestRepository extends JpaRepository<ReviewRequestEnti
     Optional<ReviewRequestEntity> findByRequesterIdAndId(Long requesterId, Long id);
 
     List<ReviewRequestEntity> findAllByMissionId(Long missionId);
+
+    List<ReviewRequestEntity> findAllByRequesterIdOrderByIdDesc(Long requesterId);
 }

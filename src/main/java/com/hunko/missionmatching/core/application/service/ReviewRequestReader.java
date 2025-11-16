@@ -6,6 +6,7 @@ import com.hunko.missionmatching.core.domain.ReviewRequestId;
 import com.hunko.missionmatching.storage.ReviewRequestEntity;
 import com.hunko.missionmatching.storage.ReviewRequestEntityMapper;
 import com.hunko.missionmatching.storage.ReviewRequestRepository;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -25,5 +26,10 @@ public class ReviewRequestReader {
     public Optional<ReviewRequest> loadFrom(ReviewRequestId requestId) {
         Optional<ReviewRequestEntity> requestEntity = reviewRequestRepository.findById(requestId.toLong());
         return requestEntity.map(ReviewRequestEntityMapper::toReviewRequest);
+    }
+
+    public List<ReviewRequest> loadFrom(Requester requester) {
+        List<ReviewRequestEntity> requestEntities = reviewRequestRepository.findAllByRequesterIdOrderByIdDesc(requester.toLong());
+        return requestEntities.stream().map(ReviewRequestEntityMapper::toReviewRequest).toList();
     }
 }
