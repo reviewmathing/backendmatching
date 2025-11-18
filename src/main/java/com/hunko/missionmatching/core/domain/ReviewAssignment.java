@@ -64,7 +64,7 @@ public class ReviewAssignment {
     public void timeOut() {
         this.reviewAssignmentStatus = ReviewAssignmentStatus.TIME_OUT;
         DomainEventPublisher.instance().published(new ReviewTimeOut(
-                reviewerId.toLong()
+                id
         ));
     }
 

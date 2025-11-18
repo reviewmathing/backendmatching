@@ -17,6 +17,9 @@ import com.hunko.missionmatching.core.domain.ReviewRequestSaver;
 import com.hunko.missionmatching.core.domain.ReviewRequestType;
 import com.hunko.missionmatching.core.domain.TestMissionFactory;
 import com.hunko.missionmatching.storage.MissionRepository;
+import com.hunko.missionmatching.storage.ReviewRequestRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +41,9 @@ class MissionListenerTest {
     private MissionListener missionListener;
 
     @Autowired
+    private ReviewRequestRepository reviewRequestRepository;
+
+    @Autowired
     private MissionSaver missionSaver;
 
     @Autowired
@@ -52,6 +58,7 @@ class MissionListenerTest {
     @BeforeEach
     void setUp() {
         missionRepository.deleteAll();
+        reviewRequestRepository.deleteAll();
     }
 
     @Test

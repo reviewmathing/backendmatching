@@ -11,6 +11,7 @@ import com.hunko.missionmatching.core.domain.ReviewMatched;
 import com.hunko.missionmatching.core.scheduler.MissionEndScheduler;
 import com.hunko.missionmatching.core.scheduler.MissionReviewCloseScheduler;
 import com.hunko.missionmatching.core.scheduler.MissionStartedScheduler;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -56,6 +57,7 @@ public class MissionListener {
         try {
             JobParameters params = new JobParametersBuilder()
                     .addLong("missionId", event.id())
+                    .addLocalDateTime("job time",LocalDateTime.now())
                     .toJobParameters();
             jobLauncher.run(updateRejectJob, params);
             Mission mission = missionReader.readById(event.id()).get();

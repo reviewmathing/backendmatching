@@ -56,7 +56,7 @@ class AssignmentCloseJobTest {
             ReviewAssignmentEntity reviewAssignmentEntity = new ReviewAssignmentEntity(
                     null,
                     1L,
-                    1L,
+                    (long)i,
                     ZonedDateTime.now(),
                     ReviewAssignmentStatus.NOT_CLEARED
             );

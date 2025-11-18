@@ -16,10 +16,12 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
+import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
+@SpringBatchTest
 class RejectJobTest {
 
     @Autowired
@@ -29,7 +31,7 @@ class RejectJobTest {
     private JobLauncher jobLauncher;
 
     @Autowired
-    private Job rejectJob;
+    private Job updateRejectJob;
 
     @BeforeEach
     void setUp() {
@@ -64,7 +66,7 @@ class RejectJobTest {
                 .addLong("missionId", 1L)
                 .toJobParameters();
 
-        jobLauncher.run(rejectJob, params);
+        jobLauncher.run(updateRejectJob, params);
 
         assertThat(reviewRequestRepository.findById(urlEntity.getId()).get()
                 .getReviewRequestType()).isEqualTo(ReviewRequestType.REQUEST);
