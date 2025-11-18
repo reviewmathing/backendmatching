@@ -7,10 +7,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserReader {
     public List<User> loadFrom(List<Long> ids) {
-        return null;
+        return List.of();
     }
 
     public Optional<User> loadFrom(Long id) {
-        return null;
+        return Optional.empty();
     }
 }

@@ -51,7 +51,7 @@ public class ReviewAssignmentController {
                                            @PathVariable("reviewassigmentId") Long reviewassigmentId) {
         ReviewAssignment reviewAssignment = reviewAssigmentService.loadFrom(userId, reviewassigmentId);
         List<ReviewAssignment> reviewerAssignment = reviewAssigmentService.loadAssignmentsFrom(
-                RevieweeId.of(reviewassigmentId));
+                RevieweeId.of(userId));
         String missionName = missionReader.readById(reviewAssignment.getMissionId().toLong()).map(Mission::getTitle)
                 .orElseGet(() -> "Unknown");
         List<User> users = userReader.loadFrom(toUserIds(reviewerAssignment, reviewAssignment.getReviewees()));

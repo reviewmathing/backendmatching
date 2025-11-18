@@ -50,6 +50,7 @@ public class MissionListener {
         missionReader.readById(event.id()).ifPresent(missionEndScheduler::schedule);
     }
 
+    @Async("threadPoolTaskExecutor")
     @TransactionalEventListener(value = MissionCompleted.class, phase = TransactionPhase.AFTER_COMMIT)
     public void handle(MissionCompleted event) {
         try {

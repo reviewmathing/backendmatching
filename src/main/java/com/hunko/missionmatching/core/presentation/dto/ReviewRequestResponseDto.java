@@ -20,7 +20,7 @@ public record ReviewRequestResponseDto(
                 reviewRequest.getReviewRequestId().toLong(),
                 reviewRequest.getMissionId().toLong(),
                 name,
-                reviewRequest.getGithubUri().toUriString(),
+                reviewRequest.getGithubUri() == null ? null : reviewRequest.getGithubUri().toUriString(),
                 reviewRequest.getReviewRequestStatus()
         );
     }
