@@ -14,6 +14,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.TimeZoneStorage;
+import org.hibernate.annotations.TimeZoneStorageType;
 
 @Entity
 @Table(indexes = {
@@ -28,7 +30,9 @@ public class MissionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
+    @TimeZoneStorage(value = TimeZoneStorageType.NATIVE)
     private ZonedDateTime startDate;
+    @TimeZoneStorage(value = TimeZoneStorageType.NATIVE)
     private ZonedDateTime endDate;
     private Long creator;
     @Enumerated(EnumType.STRING)

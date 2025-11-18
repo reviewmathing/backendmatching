@@ -11,6 +11,8 @@ import java.time.ZonedDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.TimeZoneStorage;
+import org.hibernate.annotations.TimeZoneStorageType;
 
 @Getter
 @Entity
@@ -23,6 +25,7 @@ public class ReviewAssignmentEntity {
 
     private Long missionId;
     private Long reviewerId;
+    @TimeZoneStorage(value = TimeZoneStorageType.NATIVE)
     private ZonedDateTime limitTime;
     @Enumerated(EnumType.STRING)
     private ReviewAssignmentStatus reviewAssignmentStatus;
