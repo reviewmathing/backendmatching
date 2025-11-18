@@ -1,5 +1,6 @@
 package com.hunko.missionmatching.core.application.service;
 
+import com.hunko.missionmatching.core.domain.MissionId;
 import com.hunko.missionmatching.core.domain.ReviewAssignment;
 import com.hunko.missionmatching.core.domain.ReviewAssignmentReader;
 import com.hunko.missionmatching.core.domain.RevieweeId;
@@ -33,8 +34,8 @@ public class ReviewAssigmentService {
         return reviewAssignment;
     }
 
-    public List<ReviewAssignment> loadAssignmentsFrom(RevieweeId revieweeId) {
-        return reviewAssignmentReader.loadAssignmentsFrom(revieweeId);
+    public List<ReviewAssignment> loadAssignmentsFrom(MissionId missionId, RevieweeId revieweeId) {
+        return reviewAssignmentReader.loadAssignmentsFrom(missionId,revieweeId);
     }
 
     public void complete(Long assigmentId, ReviewerId reviewerId, Long revieweeId) {

@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class User {
 
-    private final Long userId;
+    private final Long id;
     private final String name;
     private final int unreviewedCount;
     private final int allowedReportCount;
