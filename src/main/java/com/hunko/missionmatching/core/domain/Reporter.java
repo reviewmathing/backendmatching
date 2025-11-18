@@ -1,12 +1,11 @@
 package com.hunko.missionmatching.core.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
-public class User {
-
+@AllArgsConstructor
+public class Reporter {
     private final Long id;
     private final String name;
 }

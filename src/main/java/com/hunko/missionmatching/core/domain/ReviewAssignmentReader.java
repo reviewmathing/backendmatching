@@ -38,6 +38,12 @@ public class ReviewAssignmentReader {
         return reviewAssigmentRepository.findById(id).map(this::toReviewAssignment);
     }
 
+    public Optional<ReviewAssignment> loadFrom(MissionId id, ReviewerId reviewerId) {
+        Optional<ReviewAssignmentEntity> reviewAssignmentEntity = reviewAssigmentRepository.findByMissionIdAndReviewerId(
+                id.toLong(), reviewerId.toLong());
+        return reviewAssignmentEntity.map(this::toReviewAssignment);
+    }
+
     private ReviewAssignment toReviewAssignment(ReviewAssignmentEntity reviewAssignmentEntity) {
         List<ReviewAssignmentRevieweeEntity> revieweeEntities = reviewAssigmentRevieweeRepository.findByReviewAssignmentEntity(
                 reviewAssignmentEntity);

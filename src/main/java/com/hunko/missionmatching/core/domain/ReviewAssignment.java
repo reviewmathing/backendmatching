@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import lombok.Getter;
 
 @Getter
@@ -66,6 +67,19 @@ public class ReviewAssignment {
         DomainEventPublisher.instance().published(new ReviewTimeOut(
                 id
         ));
+    }
+
+    public boolean hasReviewee(RevieweeId of) {
+        for (Reviewee reviewee : reviewees) {
+            if(reviewee.getRevieweeId().equals(of)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Reviewee getReviewee(RevieweeId reviewerId) {
+        return reviewees.stream().filter(r -> r.getRevieweeId().equals(reviewerId)).findFirst().orElseThrow(ErrorType.ENTITY_NOT_FOUND::toException);
     }
 
     @Override
