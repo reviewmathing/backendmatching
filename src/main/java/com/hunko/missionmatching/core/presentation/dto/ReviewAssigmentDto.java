@@ -61,6 +61,7 @@ public class ReviewAssigmentDto {
     @NoArgsConstructor
     @ToString
     public static class Details {
+        private Long missionId;
         private String missionName;
         private Long reviewAssigmentId;
         private ReviewAssignmentStatus status;
@@ -68,10 +69,11 @@ public class ReviewAssigmentDto {
         private List<ReviewerDetails> reviewerDetails;
         private List<RevieweeDetails> revieweeDetails;
 
-        public Details(String missionName, Long reviewAssigmentId, ReviewAssignmentStatus status,
+        public Details(Long missionId,String missionName, Long reviewAssigmentId, ReviewAssignmentStatus status,
                        ZonedDateTime limitTime,
                        List<ReviewerDetails> reviewerDetails,
                        List<RevieweeDetails> revieweeDetails) {
+            this.missionId = missionId;
             this.missionName = missionName;
             this.reviewAssigmentId = reviewAssigmentId;
             this.status = status;
@@ -86,6 +88,7 @@ public class ReviewAssigmentDto {
             List<ReviewerDetails> reviewerDetails = toReviewerDetails(reviewAssignment.getReviewerId(), reviewer,
                     users);
             return new Details(
+                    reviewAssignment.getMissionId().toLong(),
                     missionName,
                     reviewAssignment.getId(),
                     reviewAssignment.getReviewAssignmentStatus(),

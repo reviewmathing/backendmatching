@@ -134,8 +134,8 @@ class ReviewAssignmentIntegrationTest {
         assignmentSaver.save(List.of(reviewAssignment));
         String userName = "testUser";
         when(userReader.loadFrom(anyList())).thenReturn(List.of(
-                new User(userId, userName, 0, 0),
-                new User(2L, userName + "2", 0, 0)
+                new User(userId, userName),
+                new User(2L, userName + "2")
         ));
 
         MvcResult result = mockMvc.perform(
@@ -151,6 +151,7 @@ class ReviewAssignmentIntegrationTest {
         Details details = objectMapper.readValue(result.getResponse().getContentAsString(), Details.class);
         assertThat(details).isEqualTo(
                 new ReviewAssigmentDto.Details(
+                        missionId,
                         missionName,
                         1L,
                         reviewAssignment.getReviewAssignmentStatus(),
