@@ -2,6 +2,7 @@ package com.hunko.missionmatching.core.domain;
 
 import com.hunko.missionmatching.storage.ReportEntity;
 import com.hunko.missionmatching.storage.ReportRepository;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -39,5 +40,10 @@ public class ReportReader {
                 reportEntity.getExplanation(),
                 reportEntity.getReportStatus()
         );
+    }
+
+    public List<Report> loadApprovedReportFrom(TargetUserId targetUserId) {
+        List<ReportEntity> reportEntities = reportRepository.findAllByTargetUserIdAndReportStatus(targetUserId.toLong(),ReportStatus.APPROVED);
+        return reportEntities.stream().map(this::toReport).toList();
     }
 }

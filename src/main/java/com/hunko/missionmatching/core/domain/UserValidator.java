@@ -1,6 +1,6 @@
 package com.hunko.missionmatching.core.domain;
 
-import com.hunko.missionmatching.core.exception.ErrorType;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -8,9 +8,14 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class UserValidator {
 
-    private final UserReader userReader;
+    private static final Integer MAX_REPORT_COUNT = 2;
+
+    private final ReportReader reportReader;
+    private final ReviewFailureReader reviewFailureReader;
 
     public boolean canRequestReview(Long userId) {
-        return true;
+        List<ReviewFailure> failures = reviewFailureReader.readFrom(ReviewerId.of(userId));
+        List<Report> reports = reportReader.loadApprovedReportFrom(TargetUserId.of(userId));
+        return reports.size() + failures.size() < MAX_REPORT_COUNT;
     }
 }
