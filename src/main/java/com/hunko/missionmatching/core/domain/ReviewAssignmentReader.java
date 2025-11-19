@@ -39,20 +39,20 @@ public class ReviewAssignmentReader {
     }
 
     public Optional<ReviewAssignment> loadFrom(MissionId id, ReviewerId reviewerId) {
-        Optional<ReviewAssignmentEntity> reviewAssignmentEntity = reviewAssigmentRepository.findByMissionIdAndReviewerId(
-                id.toLong(), reviewerId.toLong());
+        Optional<ReviewAssignmentEntity> reviewAssignmentEntity = reviewAssigmentRepository.findByReviewerIdAndMissionId(
+                reviewerId.toLong(), id.toLong());
         return reviewAssignmentEntity.map(this::toReviewAssignment);
-    }
-
-    private ReviewAssignment toReviewAssignment(ReviewAssignmentEntity reviewAssignmentEntity) {
-        List<ReviewAssignmentRevieweeEntity> revieweeEntities = reviewAssigmentRevieweeRepository.findByReviewAssignmentEntity(
-                reviewAssignmentEntity);
-        return ReviewAssignmentEntityMapper.toReviewAssignment(reviewAssignmentEntity, revieweeEntities);
     }
 
     public List<ReviewAssignment> loadAssignmentsFrom(MissionId missionId, RevieweeId revieweeId) {
         List<ReviewAssignmentRevieweeEntity> reviewee = reviewAssigmentRevieweeRepository.findByMissionIdAndRevieweeId(
                 missionId.toLong(), revieweeId.toLong());
         return reviewee.stream().map(ReviewAssignmentEntityMapper::toReviewAssignment).toList();
+    }
+
+    private ReviewAssignment toReviewAssignment(ReviewAssignmentEntity reviewAssignmentEntity) {
+        List<ReviewAssignmentRevieweeEntity> revieweeEntities = reviewAssigmentRevieweeRepository.findByReviewAssignmentEntity(
+                reviewAssignmentEntity);
+        return ReviewAssignmentEntityMapper.toReviewAssignment(reviewAssignmentEntity, revieweeEntities);
     }
 }

@@ -20,8 +20,8 @@ public interface MissionRepository extends JpaRepository<MissionEntity, Long> {
             SELECT m
             FROM MissionEntity m
             WHERE m.status = :status
-            and m.startDate > :cursorStartDate 
-            or (m.startDate = :cursorStartDate and m.id > :cursorId)
+            and (m.startDate > :cursorStartDate 
+            or (m.startDate = :cursorStartDate and m.id > :cursorId))
             order by m.startDate asc
             """)
     List<MissionEntity> findMissionByStartDate(ZonedDateTime cursorStartDate, long cursorId, MissionStatus status,
@@ -31,8 +31,8 @@ public interface MissionRepository extends JpaRepository<MissionEntity, Long> {
                 SELECT m
                 FROM MissionEntity m
                 WHERE m.status = :status
-                and m.endDate > :cursorEndDate 
-                or (m.endDate = :cursorEndDate and m.id > :cursorId)
+                and (m.endDate > :cursorEndDate 
+                or (m.endDate = :cursorEndDate and m.id > :cursorId))
                 order by m.endDate
             """)
     List<MissionEntity> findMissionByEndDate(ZonedDateTime cursorEndDate, long cursorId, MissionStatus status,

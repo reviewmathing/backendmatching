@@ -9,10 +9,12 @@ import com.hunko.missionmatching.storage.ReviewRequestRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class ReviewRequestReader {
 
     private final ReviewRequestRepository reviewRequestRepository;
@@ -29,7 +31,10 @@ public class ReviewRequestReader {
     }
 
     public List<ReviewRequest> loadFrom(Requester requester) {
+        long before = System.currentTimeMillis();
         List<ReviewRequestEntity> requestEntities = reviewRequestRepository.findAllByRequesterIdOrderByIdDesc(requester.toLong());
-        return requestEntities.stream().map(ReviewRequestEntityMapper::toReviewRequest).toList();
+        List<ReviewRequest> list = requestEntities.stream().map(ReviewRequestEntityMapper::toReviewRequest).toList();
+        log.info("load ReviewRequest from {} took {} ms", requester, System.currentTimeMillis() - before);
+        return list;
     }
 }

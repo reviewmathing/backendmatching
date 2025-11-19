@@ -7,6 +7,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
 import java.time.ZonedDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -17,6 +19,9 @@ import org.hibernate.annotations.TimeZoneStorageType;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(indexes = {
+        @Index(name = "revierwer_id_and_mission_id", columnList = "reviewerId,missionId"),
+})
 public class ReviewAssignmentEntity {
 
     @Id
@@ -30,7 +35,8 @@ public class ReviewAssignmentEntity {
     @Enumerated(EnumType.STRING)
     private ReviewAssignmentStatus reviewAssignmentStatus;
 
-    public ReviewAssignmentEntity(Long id, Long missionId, Long reviewerId, ZonedDateTime limitTime, ReviewAssignmentStatus reviewAssignmentStatus) {
+    public ReviewAssignmentEntity(Long id, Long missionId, Long reviewerId, ZonedDateTime limitTime,
+                                  ReviewAssignmentStatus reviewAssignmentStatus) {
         this.id = id;
         this.missionId = missionId;
         this.reviewerId = reviewerId;

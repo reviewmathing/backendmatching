@@ -17,7 +17,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(
         indexes = {
-                @Index(name = "mission_id_requestor_id_reviewRequest_type_idx", columnList = "missionId,requesterId,reviewRequestType", unique = true)
+                @Index(name = "mission_id_requestor_id_reviewRequest_type_idx", columnList = "missionId,requesterId,reviewRequestType", unique = true),
+                @Index(name = "requester_id_and_id",columnList = "requesterId,id")
         }
 )
 public class ReviewRequestEntity {

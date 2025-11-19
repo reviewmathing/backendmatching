@@ -48,7 +48,6 @@ public class UserReader {
                 builder.queryParam("ids", id);
             }
             URI uri = builder.build().encode().toUri();
-            log.info("Loading users from {}", uri);
             ResponseEntity<String> response = restTemplate.getForEntity(uri, String.class);
             if (response.getStatusCode() != HttpStatus.OK) {
                 log.warn("users found response status code: {} message : {}", response.getStatusCode(),
