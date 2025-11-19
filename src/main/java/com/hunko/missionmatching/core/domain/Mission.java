@@ -34,8 +34,7 @@ public class Mission {
 
     public void updateOngoing(LocalDateTime startedTime) {
         if (!MissionStatus.PENDING.equals(this.status) || !this.timePeriod.isEqualsStartDate(startedTime)) {
-            //todo : 추후 업데이트 예정
-            ErrorType.INVALID_INPUT.throwException();
+            ErrorType.INVALID_MISSION_STATE.throwException();
         }
         this.status = MissionStatus.ONGOING;
         DomainEventPublisher.instance().published(new MissionOngoinged(this.id.toLong()));
@@ -43,8 +42,7 @@ public class Mission {
 
     public void updateCompleted(LocalDateTime endDate) {
         if (!MissionStatus.ONGOING.equals(this.status) || !this.timePeriod.isEqualsEndDate(endDate)) {
-            //todo : 추후 업데이트 예정
-            ErrorType.INVALID_INPUT.throwException();
+            ErrorType.INVALID_MISSION_STATE.throwException();
         }
         this.status = MissionStatus.COMPLETED;
         DomainEventPublisher.instance().published(new MissionCompleted(this.id.toLong()));

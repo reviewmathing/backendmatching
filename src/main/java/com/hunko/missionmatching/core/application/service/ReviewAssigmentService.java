@@ -28,8 +28,7 @@ public class ReviewAssigmentService {
         ReviewAssignment reviewAssignment = reviewAssignmentReader.loadFrom(reviewassigmentId)
                 .orElseThrow(ErrorType.ENTITY_NOT_FOUND::toException);
         if (!reviewAssignment.getReviewerId().equals(ReviewerId.of(userId))) {
-            //todo : 추후 예외 수정예정
-            ErrorType.INVALID_INPUT.throwException();
+            ErrorType.UNAUTHORIZED_ACTION.throwException();
         }
         return reviewAssignment;
     }
@@ -42,8 +41,7 @@ public class ReviewAssigmentService {
         ReviewAssignment reviewAssignment = reviewAssignmentReader.loadFrom(assigmentId)
                 .orElseThrow(ErrorType.ENTITY_NOT_FOUND::toException);
         if (!reviewAssignment.getReviewerId().equals(reviewerId)) {
-            //todo : 추후 수정예정
-            ErrorType.INVALID_INPUT.throwException();
+            ErrorType.UNAUTHORIZED_ACTION.throwException();
         }
         LocalDateTime now = ServerTime.now();
         reviewAssignment.completeReview(now, revieweeId);

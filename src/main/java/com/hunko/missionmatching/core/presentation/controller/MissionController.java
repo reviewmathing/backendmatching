@@ -2,8 +2,11 @@ package com.hunko.missionmatching.core.presentation.controller;
 
 import com.hunko.missionmatching.core.Authorities;
 import com.hunko.missionmatching.core.application.service.MissionService;
+import com.hunko.missionmatching.core.application.service.ReviewRequestReader;
 import com.hunko.missionmatching.core.domain.Creator;
 import com.hunko.missionmatching.core.domain.Mission;
+import com.hunko.missionmatching.core.domain.Requester;
+import com.hunko.missionmatching.core.domain.ReviewRequest;
 import com.hunko.missionmatching.core.presentation.dto.MissionCursorDto;
 import com.hunko.missionmatching.core.presentation.dto.MissionPageDto;
 import com.hunko.missionmatching.core.presentation.dto.MissionRegisterDto;
@@ -29,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MissionController {
 
     private final MissionService missionService;
+    private final ReviewRequestReader reviewRequestReader;
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
@@ -40,9 +44,11 @@ public class MissionController {
     }
 
     @GetMapping
-    public MissionPageDto findAll(@UserRole Authorities authorities, @Validated MissionCursorDto cursorDto,
+    public MissionPageDto findAll(@UserId Long userId, @UserRole Authorities authorities,
+                                  @Validated MissionCursorDto cursorDto,
                                   @RequestParam(defaultValue = "10") @Min(10) @Max(50) Integer limit) {
         List<Mission> missions = missionService.loadFrom(authorities, cursorDto.toMissionCursor(limit));
-        return MissionPageDto.from(missions);
+        List<ReviewRequest> reviewRequests = reviewRequestReader.loadFrom(Requester.of(userId));
+        return MissionPageDto.from(missions, reviewRequests);
     }
 }

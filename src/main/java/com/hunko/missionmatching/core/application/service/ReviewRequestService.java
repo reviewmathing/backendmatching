@@ -29,8 +29,7 @@ public class ReviewRequestService {
             ErrorType.INVALID_MISSION.throwException();
         }
         if (!userValidator.canRequestReview(requester.toLong())){
-            //todo : 추후 수정예정
-            ErrorType.INVALID_INPUT.throwException();
+            ErrorType.REVIEW_REQUETST_RULE_VIOLATION.throwException();
         }
         ReviewRequest request = new ReviewRequest(requester, missionId, reviewCount);
         try {
@@ -58,7 +57,7 @@ public class ReviewRequestService {
         ReviewRequest reviewRequest = reviewRequestReader.loadFrom(requester, reviewRequestId)
                 .orElseThrow(ErrorType.ENTITY_NOT_FOUND::toException);
         if (!reviewRequest.getMissionId().equals(missionId)) {
-            ErrorType.INVALID_INPUT.throwException();
+            ErrorType.ENTITY_NOT_FOUND.throwException();
         }
         return reviewRequest;
     }

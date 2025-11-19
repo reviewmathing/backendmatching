@@ -29,16 +29,14 @@ public class ReviewRequest {
 
     public void updateGithubUrl(GithubUri githubUri) {
         if (!ReviewRequestType.REQUEST.equals(reviewRequestStatus)) {
-            //todo: 추후 설정예정
-            ErrorType.INVALID_INPUT.throwException();
+            ErrorType.INVALID_REVIEW_REQUEST_STATE.throwException();
         }
         this.githubUri = githubUri;
     }
 
     public void cancel() {
         if (!ReviewRequestType.REQUEST.equals(this.reviewRequestStatus)) {
-            //todo: 추후 설정예정
-            ErrorType.INVALID_INPUT.throwException();
+            ErrorType.INVALID_REVIEW_REQUEST_STATE.throwException();
         }
         this.reviewRequestStatus = ReviewRequestType.CANCEL;
     }
@@ -49,7 +47,7 @@ public class ReviewRequest {
 
     public void matched() {
         if (!ReviewRequestType.REQUEST.equals(this.reviewRequestStatus)) {
-            ErrorType.INVALID_INPUT.throwException();
+            ErrorType.INVALID_REVIEW_REQUEST_STATE.throwException();
         }
         this.reviewRequestStatus = ReviewRequestType.MATCHED;
     }

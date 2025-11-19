@@ -39,8 +39,7 @@ public class ReviewAssignment {
     public void completeReview(LocalDateTime now, Long revieweeId) {
         LocalDateTime serverDateTime = DateUtil.toServerDateTime(limitTime);
         if(serverDateTime.isBefore(now)){
-            //todo: 예외 변경예정
-            ErrorType.INVALID_INPUT.throwException();
+            ErrorType.INVALID_REVIEW_ASSIGNMENT_STATE.throwException();
         }
 
         Reviewee reviewee = reviewees.stream().filter(r -> r.getId().equals(revieweeId)).findFirst()

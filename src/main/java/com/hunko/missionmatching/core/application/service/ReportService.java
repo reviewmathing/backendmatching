@@ -38,10 +38,6 @@ public class ReportService {
     public void report(MissionId missionId, Long reportUserId, ReviewerId reviewerId, String explanation) {
         ReviewAssignment reviewAssignment = reviewAssignmentReader.loadFrom(missionId, reviewerId)
                 .orElseThrow(ErrorType.ENTITY_NOT_FOUND::toException);
-        if (!reviewAssignment.hasReviewee(RevieweeId.of(reportUserId))) {
-            //todo : 추후 수정예정
-            ErrorType.INVALID_INPUT.throwException();
-        }
         Reviewee reviewee = reviewAssignment.getReviewee(RevieweeId.of(reportUserId));
         List<User> users = userReader.loadFrom(List.of(reportUserId, reviewerId.toLong()));
         Report report = ReportFactory.create(users, missionId, reviewerId.toLong(), reportUserId,

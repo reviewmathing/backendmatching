@@ -21,7 +21,7 @@ public class ReviewFailureService {
         ReviewAssignment reviewAssignment = reader.loadFrom(reviewAssignmentId).get();
         if(!reviewAssignment.getReviewAssignmentStatus().equals(ReviewAssignmentStatus.TIME_OUT)){
             //todo: 추후 예외처리예정
-            ErrorType.INVALID_INPUT.throwException();
+            ErrorType.INVALID_REVIEW_ASSIGNMENT_STATE.throwException();
         }
         reviewFailureSaver.save(new ReviewFailure(reviewAssignment.getMissionId(),reviewAssignment.getReviewerId()));
     }

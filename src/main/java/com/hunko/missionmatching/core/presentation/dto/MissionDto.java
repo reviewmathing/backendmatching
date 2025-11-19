@@ -5,5 +5,5 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 public record MissionDto(Long id, String name, LocalDateTime startDateTime, LocalDateTime endDateTime, ZoneId zone,
-                         MissionStatus missionStatus) {
+                         MissionStatus missionStatus, boolean isRequested) {
 }

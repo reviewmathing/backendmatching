@@ -14,7 +14,7 @@ public class ReviewGithubUrlUpdateService {
                 .orElseThrow(ErrorType.ENTITY_NOT_FOUND::toException);
 
         if (!MissionStatus.ONGOING.equals(mission.getStatus())) {
-            ErrorType.INVALID_INPUT.throwException();
+            ErrorType.INVALID_MISSION_STATE.throwException();
         }
         GithubUri missionUrl = mission.getMissionUrl();
         if (!missionUrl.isSubUrl(githubUri)) {
