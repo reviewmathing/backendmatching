@@ -1,6 +1,9 @@
 package com.hunko.missionmatching.storage;
 
 import com.hunko.missionmatching.core.domain.ReviewAssignmentStatus;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -9,14 +12,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
+import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.TimeZoneColumn;
 import org.hibernate.annotations.TimeZoneStorage;
 import org.hibernate.annotations.TimeZoneStorageType;
 
-@Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(indexes = {
@@ -26,12 +30,19 @@ public class ReviewAssignmentEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Getter
     private Long id;
-
+    @Getter
     private Long missionId;
+    @Getter
     private Long reviewerId;
-    @TimeZoneStorage(value = TimeZoneStorageType.NATIVE)
-    private ZonedDateTime limitTime;
+    @AttributeOverrides({
+            @AttributeOverride(name = "localDateTime", column = @Column(name = "limit_time")),
+            @AttributeOverride(name = "zoneId", column = @Column(name = "limit_time_time_zone_id"))
+    })
+    private ZoneDateTimeJpa limitTime;
+
+    @Getter
     @Enumerated(EnumType.STRING)
     private ReviewAssignmentStatus reviewAssignmentStatus;
 
@@ -40,11 +51,15 @@ public class ReviewAssignmentEntity {
         this.id = id;
         this.missionId = missionId;
         this.reviewerId = reviewerId;
-        this.limitTime = limitTime;
+        this.limitTime = new  ZoneDateTimeJpa(limitTime);
         this.reviewAssignmentStatus = reviewAssignmentStatus;
     }
 
     public void setStatus(ReviewAssignmentStatus reviewAssignmentStatus) {
         this.reviewAssignmentStatus = reviewAssignmentStatus;
+    }
+
+    public ZonedDateTime getLimitTime() {
+        return limitTime.toZoneDateTime();
     }
 }

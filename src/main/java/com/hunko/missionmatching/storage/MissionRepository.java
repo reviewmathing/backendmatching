@@ -2,6 +2,7 @@ package com.hunko.missionmatching.storage;
 
 import com.hunko.missionmatching.core.domain.Mission;
 import com.hunko.missionmatching.core.domain.MissionStatus;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import org.springframework.data.domain.Limit;
@@ -21,22 +22,22 @@ public interface MissionRepository extends JpaRepository<MissionEntity, Long> {
             SELECT m
             FROM MissionEntity m
             WHERE m.status = :status
-            and (m.startDate > :cursorStartDate 
-            or (m.startDate = :cursorStartDate and m.id > :cursorId))
-            order by m.startDate asc
+            and (m.startDate.localDateTime > :cursorStartDate 
+            or (m.startDate.localDateTime = :cursorStartDate and m.id > :cursorId))
+            order by m.startDate.localDateTime asc
             """)
-    List<MissionEntity> findMissionByStartDate(ZonedDateTime cursorStartDate, long cursorId, MissionStatus status,
+    List<MissionEntity> findMissionByStartDate(LocalDateTime cursorStartDate, long cursorId, MissionStatus status,
                                                int limit);
 
     @Query("""
                 SELECT m
                 FROM MissionEntity m
                 WHERE m.status = :status
-                and (m.endDate > :cursorEndDate 
-                or (m.endDate = :cursorEndDate and m.id > :cursorId))
-                order by m.endDate
+                and (m.endDate.localDateTime > :cursorEndDate 
+                or (m.endDate.localDateTime = :cursorEndDate and m.id > :cursorId))
+                order by m.endDate.localDateTime
             """)
-    List<MissionEntity> findMissionByEndDate(ZonedDateTime cursorEndDate, long cursorId, MissionStatus status,
+    List<MissionEntity> findMissionByEndDate(LocalDateTime cursorEndDate, long cursorId, MissionStatus status,
                                              Limit limit);
 
     List<MissionEntity> findByStatus(MissionStatus missionStatus);

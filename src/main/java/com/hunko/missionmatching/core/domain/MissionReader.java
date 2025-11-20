@@ -5,6 +5,7 @@ import com.hunko.missionmatching.storage.MissionEntity;
 import com.hunko.missionmatching.storage.MissionMapper;
 import com.hunko.missionmatching.storage.MissionRepository;
 import com.hunko.missionmatching.util.CursorUtil;
+import com.hunko.missionmatching.util.DateUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -57,7 +58,7 @@ public class MissionReader {
                 () -> missionRepository.findByStatus(MissionStatus.ONGOING,
                         Sort.by(Direction.ASC, "endDate"), Limit.of(missionCursor.limit())),
                 () -> missionRepository.findMissionByEndDate(
-                        missionCursor.end(),
+                        DateUtil.toServerDateTime(missionCursor.end()),
                         missionCursor.id(),
                         MissionStatus.ONGOING,
                         Limit.of(missionCursor.limit())
@@ -70,7 +71,7 @@ public class MissionReader {
                 () -> missionRepository.findByStatus(MissionStatus.PENDING,
                         Sort.by(Direction.ASC, "startDate"), Limit.of(missionCursor.limit())),
                 () -> missionRepository.findMissionByStartDate(
-                        missionCursor.start(),
+                        DateUtil.toServerDateTime(missionCursor.start()),
                         missionCursor.id(),
                         MissionStatus.PENDING,
                         missionCursor.limit())
@@ -82,7 +83,7 @@ public class MissionReader {
                 () -> missionRepository.findByStatus(MissionStatus.COMPLETED,
                         Sort.by(Direction.ASC, "endDate"), Limit.of(missionCursor.limit())),
                 () -> missionRepository.findMissionByEndDate(
-                        missionCursor.end(),
+                        DateUtil.toServerDateTime(missionCursor.end()),
                         missionCursor.id(),
                         MissionStatus.COMPLETED,
                         Limit.of(missionCursor.limit()))
