@@ -97,4 +97,8 @@ public class MissionReader {
         List<MissionEntity> entities = missionRepository.findAllById(list.stream().map(MissionId::toLong).toList());
         return entities.stream().map(MissionMapper::toMission).toList();
     }
+
+    public List<Mission> readFrom(MissionStatus missionStatus) {
+        return missionRepository.findByStatus(missionStatus).stream().map(MissionMapper::toMission).toList();
+    }
 }

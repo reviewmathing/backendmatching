@@ -1,5 +1,6 @@
 package com.hunko.missionmatching.storage;
 
+import com.hunko.missionmatching.core.domain.Mission;
 import com.hunko.missionmatching.core.domain.MissionStatus;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -37,4 +38,6 @@ public interface MissionRepository extends JpaRepository<MissionEntity, Long> {
             """)
     List<MissionEntity> findMissionByEndDate(ZonedDateTime cursorEndDate, long cursorId, MissionStatus status,
                                              Limit limit);
+
+    List<MissionEntity> findByStatus(MissionStatus missionStatus);
 }

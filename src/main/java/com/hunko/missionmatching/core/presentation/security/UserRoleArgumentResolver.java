@@ -33,6 +33,10 @@ public class UserRoleArgumentResolver implements HandlerMethodArgumentResolver {
         }
         GrantedAuthority grantedAuthority = first.get();
         String authority = grantedAuthority.getAuthority();
-        return Authorities.findByName(authority);
+        try {
+            return Authorities.findByName(authority);
+        }catch (IllegalArgumentException e){
+            return null;
+        }
     }
 }
