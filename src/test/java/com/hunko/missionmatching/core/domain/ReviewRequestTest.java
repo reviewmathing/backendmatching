@@ -29,10 +29,12 @@ class ReviewRequestTest {
     void 깃허브uri업데이트() {
         ReviewRequest request = new ReviewRequest(Requester.of(1L), MissionId.of(1L), 3);
         GithubUri githubUri = TestGithubUrlFactory.createGithubUri();
+        int reviewCount = 2;
 
-        request.updateGithubUrl(githubUri);
+        request.update(reviewCount,githubUri);
 
         assertThat(request.getGithubUri()).isEqualTo(githubUri);
+        assertThat(request.getReviewCount()).isEqualTo(reviewCount);
     }
 
     @Test
@@ -41,6 +43,6 @@ class ReviewRequestTest {
                 ReviewRequestType.MATCHED);
         GithubUri githubUri = TestGithubUrlFactory.createGithubUri();
 
-        assertThatThrownBy(() -> request.updateGithubUrl(githubUri)).isInstanceOf(CoreException.class);
+        assertThatThrownBy(() -> request.update(3, githubUri)).isInstanceOf(CoreException.class);
     }
 }

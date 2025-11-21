@@ -7,7 +7,7 @@ import com.hunko.missionmatching.core.exception.CoreException;
 import com.hunko.missionmatching.helper.FakeMissionReader;
 import org.junit.jupiter.api.Test;
 
-class ReviewGithubUrlUpdateServiceTest {
+class ReviewRequestUpdateServiceTest {
 
     @Test
     void 깃허브_URL_업데이트() {
@@ -15,14 +15,15 @@ class ReviewGithubUrlUpdateServiceTest {
         Mission mission = TestMissionFactory.createMission(1L, MissionStatus.ONGOING, 1L,
                 TestGithubUrlFactory.createGithubUri());
         fakeMissionReader.addMission(mission);
-        ReviewGithubUrlUpdateService service = new ReviewGithubUrlUpdateService(fakeMissionReader);
+        ReviewRequestUpdateService service = new ReviewRequestUpdateService(fakeMissionReader);
         GithubUri githubUri = TestGithubUrlFactory.createGithubUri("/test");
         ReviewRequest request = new ReviewRequest(ReviewRequestId.of(1L), Requester.of(1L), MissionId.of(1L), 5, null,
                 ReviewRequestType.REQUEST);
 
-        ReviewRequest result = service.updateGithubUrl(request, githubUri);
+        ReviewRequest result = service.updateGithubUrl(request, 2, githubUri);
 
         assertThat(result.getGithubUri()).isEqualTo(githubUri);
+        assertThat(result.getReviewCount()).isEqualTo(2);
     }
 
     @Test
@@ -31,22 +32,22 @@ class ReviewGithubUrlUpdateServiceTest {
         Mission mission = TestMissionFactory.createMission(1L, MissionStatus.PENDING, 1L,
                 TestGithubUrlFactory.createGithubUri("/test"));
         fakeMissionReader.addMission(mission);
-        ReviewGithubUrlUpdateService service = new ReviewGithubUrlUpdateService(fakeMissionReader);
+        ReviewRequestUpdateService service = new ReviewRequestUpdateService(fakeMissionReader);
         GithubUri githubUri = TestGithubUrlFactory.createGithubUri("/tests/1");
         ReviewRequest request = new ReviewRequest(ReviewRequestId.of(1L), Requester.of(1L), MissionId.of(1L), 5, null,
                 ReviewRequestType.REQUEST);
 
-        assertThatThrownBy(() -> service.updateGithubUrl(request, githubUri)).isInstanceOf(CoreException.class);
+        assertThatThrownBy(() -> service.updateGithubUrl(request, 2, githubUri)).isInstanceOf(CoreException.class);
     }
 
     @Test
     void 요청한_미션이_존재하지_않음() {
         FakeMissionReader fakeMissionReader = new FakeMissionReader();
-        ReviewGithubUrlUpdateService service = new ReviewGithubUrlUpdateService(fakeMissionReader);
+        ReviewRequestUpdateService service = new ReviewRequestUpdateService(fakeMissionReader);
         GithubUri githubUri = TestGithubUrlFactory.createGithubUri("/test");
         ReviewRequest request = new ReviewRequest(ReviewRequestId.of(1L), Requester.of(1L), MissionId.of(1L), 5, null,
                 ReviewRequestType.REQUEST);
 
-        assertThatThrownBy(() -> service.updateGithubUrl(request, githubUri)).isInstanceOf(CoreException.class);
+        assertThatThrownBy(() -> service.updateGithubUrl(request, 2, githubUri)).isInstanceOf(CoreException.class);
     }
 }

@@ -44,6 +44,7 @@ public class ReviewRequestController {
                 ReviewRequestId.of(reviewId),
                 MissionId.of(missionId),
                 Requester.of(userId),
+                updateGithubUriDto.reviewCount(),
                 updateGithubUriDto.toGithubUri()
         );
     }

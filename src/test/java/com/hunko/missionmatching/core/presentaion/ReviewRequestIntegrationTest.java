@@ -148,13 +148,15 @@ class ReviewRequestIntegrationTest {
                 RequestBuildersHelper.post("/api/missions/" + missionId + "/reviews/" + reviewRequestEntity.getId())
                         .authentication("1", "USER")
                         .content(Map.of(
-                                "uri", requestUrl.toUriString()
+                                "uri", requestUrl.toUriString(),
+                                "reviewCount",2
                         ))
         ).andReturn();
 
         assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
         ReviewRequestEntity resultEntity = reviewRequestRepository.findById(reviewRequestEntity.getId()).get();
         assertThat(resultEntity.getGithubUrl()).isEqualTo(requestUrl.toUriString());
+        assertThat(resultEntity.getReviewCount()).isEqualTo(2);
     }
 
     @Test

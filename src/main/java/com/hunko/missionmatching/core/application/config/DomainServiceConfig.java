@@ -1,7 +1,7 @@
 package com.hunko.missionmatching.core.application.config;
 
 import com.hunko.missionmatching.core.domain.MissionReader;
-import com.hunko.missionmatching.core.domain.ReviewGithubUrlUpdateService;
+import com.hunko.missionmatching.core.domain.ReviewRequestUpdateService;
 import com.hunko.missionmatching.core.domain.ReviewLimitTimeCalcService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,8 +10,8 @@ import org.springframework.context.annotation.Configuration;
 public class DomainServiceConfig {
 
     @Bean
-    public ReviewGithubUrlUpdateService reviewGithubUrlUpdateService(MissionReader missionReader) {
-        return new ReviewGithubUrlUpdateService(missionReader);
+    public ReviewRequestUpdateService reviewGithubUrlUpdateService(MissionReader missionReader) {
+        return new ReviewRequestUpdateService(missionReader);
     }
 
     @Bean

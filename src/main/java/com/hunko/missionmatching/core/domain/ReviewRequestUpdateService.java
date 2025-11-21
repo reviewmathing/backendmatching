@@ -4,11 +4,11 @@ import com.hunko.missionmatching.core.exception.ErrorType;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class ReviewGithubUrlUpdateService {
+public class ReviewRequestUpdateService {
 
     private final MissionReader missionReader;
 
-    public ReviewRequest updateGithubUrl(ReviewRequest request, GithubUri githubUri) {
+    public ReviewRequest updateGithubUrl(ReviewRequest request, int reviewCount, GithubUri githubUri) {
         MissionId missionId = request.getMissionId();
         Mission mission = missionReader.readById(missionId.toLong())
                 .orElseThrow(ErrorType.ENTITY_NOT_FOUND::toException);
@@ -20,7 +20,7 @@ public class ReviewGithubUrlUpdateService {
         if (!missionUrl.isSubUrl(githubUri)) {
             ErrorType.NOT_SUB_URL_FOR_MISSION.throwException();
         }
-        request.updateGithubUrl(githubUri);
+        request.update(reviewCount, githubUri);
         return request;
     }
 

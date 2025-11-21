@@ -13,6 +13,7 @@ public record ReviewRequestResponseDto(
         String missionName,
         ZonedDateTime startDateTime,
         ZonedDateTime endDateTime,
+        Integer reviewCount,
         String githubUri,
         ReviewRequestType reviewRequestStatus
 ) {
@@ -26,6 +27,7 @@ public record ReviewRequestResponseDto(
                 mission.name,
                 mission.startDateTime,
                 mission.endDateTime,
+                reviewRequest.getReviewCount(),
                 reviewRequest.getGithubUri() == null ? null : reviewRequest.getGithubUri().toUriString(),
                 reviewRequest.getReviewRequestStatus()
         );

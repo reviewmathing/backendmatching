@@ -3,7 +3,7 @@ package com.hunko.missionmatching.core.application.service;
 import com.hunko.missionmatching.core.domain.GithubUri;
 import com.hunko.missionmatching.core.domain.MissionId;
 import com.hunko.missionmatching.core.domain.Requester;
-import com.hunko.missionmatching.core.domain.ReviewGithubUrlUpdateService;
+import com.hunko.missionmatching.core.domain.ReviewRequestUpdateService;
 import com.hunko.missionmatching.core.domain.ReviewRequest;
 import com.hunko.missionmatching.core.domain.ReviewRequestId;
 import com.hunko.missionmatching.core.domain.ReviewRequestSaver;
@@ -22,13 +22,13 @@ public class ReviewRequestService {
     private final MissionValidator missionValidator;
     private final ReviewRequestSaver reviewRequestSaver;
     private final ReviewRequestReader reviewRequestReader;
-    private final ReviewGithubUrlUpdateService reviewGithubUrlUpdateService;
+    private final ReviewRequestUpdateService reviewUpdateService;
 
     public Long request(Requester requester, MissionId missionId, Integer reviewCount) {
         if (!missionValidator.isInvalidMission(missionId)) {
             ErrorType.INVALID_MISSION.throwException();
         }
-        if (!userValidator.canRequestReview(requester.toLong())){
+        if (!userValidator.canRequestReview(requester.toLong())) {
             ErrorType.REVIEW_REQUETST_RULE_VIOLATION.throwException();
         }
         ReviewRequest request = new ReviewRequest(requester, missionId, reviewCount);
@@ -40,10 +40,10 @@ public class ReviewRequestService {
     }
 
     public void updateGithubUri(ReviewRequestId reviewRequestId, MissionId missionId, Requester requester,
-                                GithubUri githubUri) {
+                                int reviewCount, GithubUri githubUri) {
         ReviewRequest reviewRequest = getReviewRequest(reviewRequestId, missionId,
                 requester);
-        ReviewRequest request = reviewGithubUrlUpdateService.updateGithubUrl(reviewRequest, githubUri);
+        ReviewRequest request = reviewUpdateService.updateGithubUrl(reviewRequest, reviewCount, githubUri);
         reviewRequestSaver.save(request);
     }
 

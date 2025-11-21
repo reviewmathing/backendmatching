@@ -9,7 +9,7 @@ public class ReviewRequest {
     private final ReviewRequestId reviewRequestId;
     private final Requester requester;
     private final MissionId missionId;
-    private final Integer reviewCount;
+    private Integer reviewCount;
     private GithubUri githubUri;
     private ReviewRequestType reviewRequestStatus;
 
@@ -27,10 +27,11 @@ public class ReviewRequest {
         this(ReviewRequestId.empty(), requester, missionId, reviewCount, null, ReviewRequestType.REQUEST);
     }
 
-    public void updateGithubUrl(GithubUri githubUri) {
+    public void update(int reviewCount, GithubUri githubUri) {
         if (!ReviewRequestType.REQUEST.equals(reviewRequestStatus)) {
             ErrorType.INVALID_REVIEW_REQUEST_STATE.throwException();
         }
+        this.reviewCount = reviewCount;
         this.githubUri = githubUri;
     }
 
