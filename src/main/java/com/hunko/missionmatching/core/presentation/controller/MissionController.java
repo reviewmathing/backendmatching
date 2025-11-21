@@ -5,9 +5,11 @@ import com.hunko.missionmatching.core.application.service.MissionService;
 import com.hunko.missionmatching.core.application.service.ReviewRequestReader;
 import com.hunko.missionmatching.core.domain.Creator;
 import com.hunko.missionmatching.core.domain.Mission;
+import com.hunko.missionmatching.core.domain.MissionId;
 import com.hunko.missionmatching.core.domain.Requester;
 import com.hunko.missionmatching.core.domain.ReviewRequest;
 import com.hunko.missionmatching.core.presentation.dto.MissionCursorDto;
+import com.hunko.missionmatching.core.presentation.dto.MissionDetailDto;
 import com.hunko.missionmatching.core.presentation.dto.MissionPageDto;
 import com.hunko.missionmatching.core.presentation.dto.MissionRequestDto;
 import com.hunko.missionmatching.core.presentation.security.UserId;
@@ -54,6 +56,13 @@ public class MissionController {
         Long id = missionService.register(missionRequestDto.title(), missionRequestDto.timePeriod(),
                 Creator.of(userId), missionRequestDto.githubUri());
         return Map.of("id", id);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/{missionId}")
+    public MissionDetailDto find(@Validated @NotNull @PathVariable Long missionId) {
+        Mission mission = missionService.loadFrom(MissionId.of(missionId));
+        return MissionDetailDto.from(mission);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

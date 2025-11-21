@@ -6,6 +6,7 @@ import com.hunko.missionmatching.core.domain.DomainEventPublisher;
 import com.hunko.missionmatching.core.domain.GithubUri;
 import com.hunko.missionmatching.core.domain.Mission;
 import com.hunko.missionmatching.core.domain.MissionCreator;
+import com.hunko.missionmatching.core.domain.MissionId;
 import com.hunko.missionmatching.core.domain.MissionReader;
 import com.hunko.missionmatching.core.domain.MissionRegistered;
 import com.hunko.missionmatching.core.domain.MissionSaver;
@@ -14,6 +15,7 @@ import com.hunko.missionmatching.core.exception.ErrorType;
 import com.hunko.missionmatching.storage.MissionCursor;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,5 +67,9 @@ public class MissionService {
         Mission mission = missionReader.readById(id).orElseThrow(ErrorType.ENTITY_NOT_FOUND::toException);
         mission.delete();
         missionSaver.save(mission);
+    }
+
+    public Mission loadFrom(MissionId id) {
+        return missionReader.readById(id.toLong()).orElseThrow(ErrorType.ENTITY_NOT_FOUND::toException);
     }
 }
