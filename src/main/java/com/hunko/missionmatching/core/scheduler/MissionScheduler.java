@@ -29,7 +29,11 @@ public abstract class MissionScheduler {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
                     SchedulerTask take = delayQueue.take();
-                    handle(take.missionId, take.time);
+                    try {
+                        handle(take.missionId, take.time);
+                    }catch (Exception e) {
+                        log.error(e.getMessage(), e);
+                    }
                     failMissionSchedulerWal.addLog(
                             new WalMissionDto(
                                     take.missionId,

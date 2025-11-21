@@ -5,6 +5,7 @@ import com.hunko.missionmatching.core.application.service.ReviewRequestService;
 import com.hunko.missionmatching.core.domain.Mission;
 import com.hunko.missionmatching.core.domain.MissionCompleted;
 import com.hunko.missionmatching.core.domain.MissionOngoinged;
+import com.hunko.missionmatching.core.domain.MissionPeriodUpdated;
 import com.hunko.missionmatching.core.domain.MissionReader;
 import com.hunko.missionmatching.core.domain.MissionRegistered;
 import com.hunko.missionmatching.core.domain.ReviewMatched;
@@ -44,6 +45,11 @@ public class MissionListener {
     @TransactionalEventListener(value = MissionRegistered.class, phase = TransactionPhase.AFTER_COMMIT)
     public void handle(MissionRegistered event) {
         missionReader.readById(event.id()).ifPresent(missionStartedScheduler::schedule);
+    }
+
+    @TransactionalEventListener(value = MissionPeriodUpdated.class, phase = TransactionPhase.AFTER_COMMIT)
+    public void handle(MissionPeriodUpdated event) {
+        missionReader.readById(event.id().toLong()).ifPresent(missionStartedScheduler::schedule);
     }
 
     @TransactionalEventListener(value = MissionOngoinged.class, phase = TransactionPhase.AFTER_COMMIT)

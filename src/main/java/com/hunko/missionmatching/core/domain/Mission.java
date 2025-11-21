@@ -53,8 +53,14 @@ public class Mission {
             ErrorType.INVALID_MISSION_STATE.throwException();
         }
         this.title = title;
-        this.timePeriod = timePeriod;
         this.missionUrl = missionUrl;
+        TimePeriod before = this.timePeriod;
+        this.timePeriod = timePeriod;
+        if(!this.timePeriod.equals(before)) {
+            DomainEventPublisher.instance().published(
+                    new MissionPeriodUpdated(this.id)
+            );
+        }
     }
 
     public void delete() {

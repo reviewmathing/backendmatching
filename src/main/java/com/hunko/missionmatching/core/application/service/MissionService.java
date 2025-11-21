@@ -57,6 +57,7 @@ public class MissionService {
         missionSaver.save(mission);
     }
 
+    @Transactional
     public void update(Long id, String title, TimePeriod timePeriod, GithubUri githubUri) {
         Mission mission = missionReader.readById(id).orElseThrow(ErrorType.ENTITY_NOT_FOUND::toException);
         mission.update(title, timePeriod, githubUri);
