@@ -19,6 +19,7 @@ import com.hunko.missionmatching.core.domain.TimePeriod;
 import com.hunko.missionmatching.core.exception.CoreException;
 import com.hunko.missionmatching.helper.FakeMissionReader;
 import com.hunko.missionmatching.helper.FakeMissionSaver;
+import com.hunko.missionmatching.helper.TestGithubUri;
 import com.hunko.missionmatching.helper.even.DomainEventUnitTest;
 import com.hunko.missionmatching.storage.MissionCursor;
 import java.time.LocalDateTime;
@@ -140,5 +141,20 @@ class MissionServiceTest extends DomainEventUnitTest {
         MissionCompleted event = getEvent(MissionCompleted.class);
         assertThat(event).isNotNull();
         assertThat(event.id()).isEqualTo(savedMission.getId().toLong());
+    }
+
+    @Test
+    void 미션_수정_플로우검증() {
+        FakeMissionReader fakeMissionReader = new FakeMissionReader();
+        Mission mission = createMission(1L, MissionStatus.PENDING, 1L);
+        fakeMissionReader.addMission(mission);
+        FakeMissionSaver fakeMissionSaver = new FakeMissionSaver();
+        MissionService missionService = new MissionService(null, fakeMissionSaver, fakeMissionReader);
+
+        missionService.update(1L, "test1",new TimePeriod(ZonedDateTime.now(),ZonedDateTime.now().plusDays(1)),
+                TestGithubUri.GITHUB_URI);
+
+        Mission savedMission = fakeMissionSaver.getMission(mission.getId().toLong().intValue());
+        assertThat(savedMission).isNotNull();
     }
 }

@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
-public record MissionRegisterDto(
+public record MissionRequestDto(
         @NotBlank String title,
         @NotNull LocalDateTime startDateTime,
         @NotNull LocalDateTime endDateTime,

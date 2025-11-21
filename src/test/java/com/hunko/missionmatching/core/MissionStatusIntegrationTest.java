@@ -4,7 +4,7 @@ import static org.awaitility.Awaitility.await;
 
 import com.hunko.missionmatching.core.domain.MissionStatus;
 import com.hunko.missionmatching.core.domain.UserReader;
-import com.hunko.missionmatching.core.presentation.dto.MissionRegisterDto;
+import com.hunko.missionmatching.core.presentation.dto.MissionRequestDto;
 import com.hunko.missionmatching.core.scheduler.MissionSchedulerWalFactory;
 import com.hunko.missionmatching.helper.StubFailMissionWalFactory;
 import com.hunko.missionmatching.storage.MissionEntity;
@@ -60,10 +60,10 @@ class MissionStatusIntegrationTest {
         headers.set("X-User-ROLE", "ADMIN");
         headers.setContentType(MediaType.APPLICATION_JSON);
         String missionUri = "https://github.com/woowacourse-precourse/java-lotto-8";
-        MissionRegisterDto missionRegisterDto = new MissionRegisterDto(title, start, end, ZoneId.systemDefault(),
+        MissionRequestDto missionRequestDto = new MissionRequestDto(title, start, end, ZoneId.systemDefault(),
                 missionUri);
         // HttpEntity 생성 (헤더 + 바디)
-        HttpEntity<MissionRegisterDto> entity = new HttpEntity<>(missionRegisterDto, headers);
+        HttpEntity<MissionRequestDto> entity = new HttpEntity<>(missionRequestDto, headers);
         ResponseEntity<Map> exchange = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
         Long id = Long.valueOf((Integer) exchange.getBody().get("id"));
 

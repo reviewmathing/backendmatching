@@ -5,22 +5,26 @@ import com.hunko.missionmatching.core.application.service.MissionService;
 import com.hunko.missionmatching.core.application.service.ReviewRequestReader;
 import com.hunko.missionmatching.core.domain.Creator;
 import com.hunko.missionmatching.core.domain.Mission;
+import com.hunko.missionmatching.core.domain.MissionId;
 import com.hunko.missionmatching.core.domain.Requester;
 import com.hunko.missionmatching.core.domain.ReviewRequest;
 import com.hunko.missionmatching.core.presentation.dto.MissionCursorDto;
 import com.hunko.missionmatching.core.presentation.dto.MissionPageDto;
-import com.hunko.missionmatching.core.presentation.dto.MissionRegisterDto;
+import com.hunko.missionmatching.core.presentation.dto.MissionRequestDto;
 import com.hunko.missionmatching.core.presentation.security.UserId;
 import com.hunko.missionmatching.core.presentation.security.UserRole;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,11 +40,19 @@ public class MissionController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public Map<String, Long> register(@Validated @RequestBody MissionRegisterDto missionRegisterDto,
+    public Map<String, Long> register(@Validated @RequestBody MissionRequestDto missionRequestDto,
                                       @UserId Long userId) {
-        Long id = missionService.register(missionRegisterDto.title(), missionRegisterDto.timePeriod(),
-                Creator.of(userId), missionRegisterDto.githubUri());
+        Long id = missionService.register(missionRequestDto.title(), missionRequestDto.timePeriod(),
+                Creator.of(userId), missionRequestDto.githubUri());
         return Map.of("id", id);
+    }
+
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{missionId}")
+    public void register(@Validated @NotNull @PathVariable Long missionId,
+                                      @Validated @RequestBody MissionRequestDto missionRequestDto) {
+       missionService.update(missionId, missionRequestDto.title(), missionRequestDto.timePeriod(), missionRequestDto.githubUri());
     }
 
     @GetMapping

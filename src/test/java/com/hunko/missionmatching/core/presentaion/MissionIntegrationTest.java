@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.hunko.missionmatching.core.domain.GithubUri;
 import com.hunko.missionmatching.core.domain.Mission;
 import com.hunko.missionmatching.core.domain.MissionStatus;
 import com.hunko.missionmatching.core.domain.TestMissionFactory;
@@ -177,7 +178,76 @@ public class MissionIntegrationTest {
     }
 
     @Test
-    public void 사용자_미션조회() throws Exception {
+    public void 사용자_미션업데이트() throws Exception {
+
+        Mission pending = TestMissionFactory.createMission(null, MissionStatus.PENDING, 1L);
+
+        List<Mission> missions = saveMissions(pending);
+        Mission mission = missions.getFirst();
+
+        String title = "test2";
+        LocalDateTime startDateTime = LocalDateTime.now();
+        LocalDateTime endDateTime = startDateTime.plusDays(2);
+        String zone = ZoneId.systemDefault().toString();
+        String url = "https://github.com/woowacourse-precourse/java-lotto-8";
+        Map<String, ? extends Serializable> requestBody = Map.of(
+                "title", title,
+                "startDateTime", startDateTime,
+                "endDateTime", endDateTime,
+                "zone", zone,
+                "github", url
+        );
+
+        MvcResult result = mockMvc.perform(
+                        RequestBuildersHelper.put("/api/missions/" + mission.getId().toLong())
+                                .authentication(String.valueOf(1), "Admin")
+                                .content(requestBody)
+
+                ).andDo(print())
+                .andReturn();
+
+        assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+        Mission updatedMission = MissionMapper.toMission(missionRepository.findById(mission.getId().toLong()).get());
+        assertThat(updatedMission.getTitle()).isEqualTo("test2");
+        assertThat(updatedMission.getTimePeriod().getStartDate()).isEqualTo(startDateTime.atZone(ZoneId.of(zone)));
+        assertThat(updatedMission.getTimePeriod().getEndDate()).isEqualTo(endDateTime.atZone(ZoneId.of(zone)));
+        assertThat(updatedMission.getMissionUrl()).isEqualTo(GithubUri.of(url));
+    }
+
+    @Test
+    public void 사용자_미션업데이트_권한없음() throws Exception {
+
+        Mission pending = TestMissionFactory.createMission(null, MissionStatus.PENDING, 1L);
+
+        List<Mission> missions = saveMissions(pending);
+        Mission mission = missions.getFirst();
+
+        String title = "test2";
+        LocalDateTime startDateTime = LocalDateTime.now();
+        LocalDateTime endDateTime = startDateTime.plusDays(2);
+        String zone = ZoneId.systemDefault().toString();
+        String url = "https://github.com/woowacourse-precourse/java-lotto-8";
+        Map<String, ? extends Serializable> requestBody = Map.of(
+                "title", title,
+                "startDateTime", startDateTime,
+                "endDateTime", endDateTime,
+                "zone", zone,
+                "github", url
+        );
+
+        MvcResult result = mockMvc.perform(
+                        RequestBuildersHelper.put("/api/missions/" + mission.getId().toLong())
+                                .authentication(String.valueOf(1), "USER")
+                                .content(requestBody)
+
+                ).andDo(print())
+                .andReturn();
+
+        assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
+    }
+
+    @Test
+    void 사용자_미션조회() throws Exception {
 
         Mission ongoing = TestMissionFactory.createMission(null, MissionStatus.ONGOING, 1L);
         Mission pending = TestMissionFactory.createMission(null, MissionStatus.PENDING, 1L);

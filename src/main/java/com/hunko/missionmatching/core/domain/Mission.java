@@ -8,10 +8,10 @@ import lombok.Getter;
 public class Mission {
 
     private final MissionId id;
-    private final String title;
-    private final TimePeriod timePeriod;
+    private String title;
+    private TimePeriod timePeriod;
     private final Creator creator;
-    private final GithubUri missionUrl;
+    private GithubUri missionUrl;
     private MissionStatus status;
 
 
@@ -46,5 +46,14 @@ public class Mission {
         }
         this.status = MissionStatus.COMPLETED;
         DomainEventPublisher.instance().published(new MissionCompleted(this.id.toLong()));
+    }
+
+    public void update(String title, TimePeriod timePeriod, GithubUri missionUrl) {
+        if (!MissionStatus.PENDING.equals(this.status)) {
+            ErrorType.INVALID_MISSION_STATE.throwException();
+        }
+        this.title = title;
+        this.timePeriod = timePeriod;
+        this.missionUrl = missionUrl;
     }
 }

@@ -94,6 +94,43 @@ class MissionTest extends DomainEventUnitTest {
         assertThatThrownBy(() -> mission.updateCompleted(endDate)).isInstanceOf(CoreException.class);
     }
 
+    @Test
+    void 미션수정() {
+        Mission mission = new Mission("test1", new TimePeriod(ZonedDateTime.now(), ZonedDateTime.now().plusDays(1)),
+                Creator.of(1L),
+                GithubUri.of("https://github.com/woowacourse-precourse/java-lotto-8"));
+
+        ZonedDateTime startDate = ZonedDateTime.now();
+        ZonedDateTime endDate = ZonedDateTime.now().plusDays(2);
+        String uri = "https://github.com/woowacourse-precourse/java-lotto-7";
+
+        mission.update("test2", new TimePeriod(startDate, endDate), GithubUri.of(uri));
+
+        assertThat(mission.getTitle()).isEqualTo("test2");
+        assertThat(mission.getTimePeriod().getStartDate()).isEqualTo(startDate);
+        assertThat(mission.getTimePeriod().getEndDate()).isEqualTo(endDate);
+        assertThat(mission.getMissionUrl()).isEqualTo(GithubUri.of(uri));
+    }
+
+    @Test
+    void 미션수정_실패() {
+        Mission mission = new Mission(
+                MissionId.emtpy(),
+                "test1",
+                new TimePeriod(ZonedDateTime.now(), ZonedDateTime.now().plusDays(1)),
+                Creator.of(1L),
+                MissionStatus.ONGOING,
+                GithubUri.of("https://github.com/woowacourse-precourse/java-lotto-8")
+        );
+
+        ZonedDateTime startDate = ZonedDateTime.now();
+        ZonedDateTime endDate = ZonedDateTime.now().plusDays(2);
+        String uri = "https://github.com/woowacourse-precourse/java-lotto-7";
+
+       assertThatThrownBy(() -> mission.update("test2", new TimePeriod(startDate, endDate), GithubUri.of(uri)))
+               .isInstanceOf(CoreException.class);
+    }
+
     private static Stream<Arguments> createFailArguments() {
         String title = "test";
         ZonedDateTime startDate = ZonedDateTime.of(2020, 1, 1, 0, 0, 0, 0, ZoneId.systemDefault());
