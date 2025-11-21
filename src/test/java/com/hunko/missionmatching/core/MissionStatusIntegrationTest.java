@@ -52,11 +52,11 @@ class MissionStatusIntegrationTest {
         String title = "test1";
         LocalDateTime start = LocalDateTime.now().plusSeconds(30);
         LocalDateTime end = LocalDateTime.now().plusMinutes(1);
-        Long creator = 1L;
+        long creator = 1L;
 
         String url = "http://localhost:" + port + "/api/missions";
         HttpHeaders headers = new HttpHeaders();
-        headers.set("X-User-ID", creator.toString());
+        headers.set("X-User-ID", String.valueOf(creator));
         headers.set("X-User-ROLE", "ADMIN");
         headers.setContentType(MediaType.APPLICATION_JSON);
         String missionUri = "https://github.com/woowacourse-precourse/java-lotto-8";

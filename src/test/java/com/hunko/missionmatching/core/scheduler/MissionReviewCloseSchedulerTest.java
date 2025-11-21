@@ -2,7 +2,6 @@ package com.hunko.missionmatching.core.scheduler;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -12,13 +11,10 @@ import com.hunko.missionmatching.core.domain.ReviewLimitTimeCalcService;
 import com.hunko.missionmatching.core.domain.TestMissionFactory;
 import com.hunko.missionmatching.core.domain.UserReader;
 import com.hunko.missionmatching.helper.StubFailMissionWalFactory;
-import com.hunko.missionmatching.storage.MissionRepository;
 import com.hunko.missionmatching.storage.ReviewAssignmentEntity;
 import com.hunko.missionmatching.storage.ReviewAssignmentRepository;
-import com.hunko.missionmatching.util.ServerTime;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -44,7 +40,7 @@ class MissionReviewCloseSchedulerTest {
     private EntityManager entityManager;
 
     @MockitoBean
-    private ReviewLimitTimeCalcService  reviewLimitTimeCalcService;
+    private ReviewLimitTimeCalcService reviewLimitTimeCalcService;
 
     @TestBean
     private MissionSchedulerWalFactory missionWalFactory;
@@ -62,8 +58,8 @@ class MissionReviewCloseSchedulerTest {
     }
 
     @Test
-    void 리뷰기간만료(){
-        for(int i = 0; i < 10; i++) {
+    void 리뷰기간만료() {
+        for (int i = 0; i < 10; i++) {
             ReviewAssignmentEntity reviewAssignmentEntity = new ReviewAssignmentEntity(
                     null,
                     1L,
@@ -76,12 +72,12 @@ class MissionReviewCloseSchedulerTest {
         when(reviewLimitTimeCalcService.calc(any())).thenReturn(ZonedDateTime.now().plusSeconds(3));
 
         missionReviewCloseScheduler.schedule(
-                TestMissionFactory.createMission(1L, MissionStatus.COMPLETED,1L)
+                TestMissionFactory.createMission(1L, MissionStatus.COMPLETED, 1L)
         );
 
         await()
                 .atMost(30, TimeUnit.SECONDS)
-                .untilAsserted(()->{
+                .untilAsserted(() -> {
                     TypedQuery<ReviewAssignmentEntity> query = entityManager.createQuery(
                             "select r from ReviewAssignmentEntity r where r.reviewAssignmentStatus = 'NOT_CLEARED'",
                             ReviewAssignmentEntity.class);

@@ -13,18 +13,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
-import jakarta.validation.OverridesAttribute;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.TimeZoneColumn;
-import org.hibernate.annotations.TimeZoneStorage;
-import org.hibernate.annotations.TimeZoneStorageType;
 
 @Entity
 @Table(indexes = {
@@ -67,7 +60,7 @@ public class MissionEntity {
         this.id = id;
         this.title = title;
         this.startDate = new ZoneDateTimeJpa(startDate);
-        this.endDate = new  ZoneDateTimeJpa(endDate);
+        this.endDate = new ZoneDateTimeJpa(endDate);
         this.creator = creator;
         this.status = status;
         this.missionUri = missionUri;

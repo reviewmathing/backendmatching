@@ -21,22 +21,14 @@ import com.hunko.missionmatching.core.scheduler.MissionSchedulerWalFactory;
 import com.hunko.missionmatching.helper.StubFailMissionWalFactory;
 import com.hunko.missionmatching.storage.MissionRepository;
 import com.hunko.missionmatching.storage.ReviewRequestRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.batch.core.JobParametersInvalidException;
-import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
-import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
-import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.convention.TestBean;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @SpringBatchTest
@@ -117,7 +109,7 @@ class MissionListenerTest {
         await()
                 .atMost(1, TimeUnit.MINUTES)
                 .untilAsserted(
-                        ()->{
+                        () -> {
                             ReviewRequest reviewRequest1 = reviewRequestReader.loadFrom(
                                     ReviewRequestId.of(request1Id)).get();
                             assertThat(reviewRequest1.getReviewRequestStatus()).isEqualTo(ReviewRequestType.REJECT);

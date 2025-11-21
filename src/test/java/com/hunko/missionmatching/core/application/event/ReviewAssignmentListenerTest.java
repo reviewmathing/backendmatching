@@ -13,7 +13,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.context.bean.override.convention.TestBean;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
@@ -23,8 +22,6 @@ class ReviewAssignmentListenerTest {
     @Autowired
     private ReviewAssignmentSaver reviewAssignmentSaver;
 
-    @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
 
     @TestBean
     private MissionSchedulerWalFactory missionWalFactory;

@@ -1,6 +1,5 @@
 package com.hunko.missionmatching.core.scheduler;
 
-import com.hunko.missionmatching.core.application.service.MissionService;
 import com.hunko.missionmatching.core.domain.Mission;
 import com.hunko.missionmatching.core.domain.ReviewLimitTimeCalcService;
 import com.hunko.missionmatching.util.DateUtil;
@@ -14,7 +13,6 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component

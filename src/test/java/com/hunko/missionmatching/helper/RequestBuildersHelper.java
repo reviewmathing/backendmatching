@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 public class RequestBuildersHelper {
 
-    private static ObjectMapper objectMapper;
+    private final static ObjectMapper objectMapper;
 
     static {
         objectMapper = new ObjectMapper();

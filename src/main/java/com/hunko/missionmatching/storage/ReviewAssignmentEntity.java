@@ -12,14 +12,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
-import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.TimeZoneColumn;
-import org.hibernate.annotations.TimeZoneStorage;
-import org.hibernate.annotations.TimeZoneStorageType;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -51,7 +47,7 @@ public class ReviewAssignmentEntity {
         this.id = id;
         this.missionId = missionId;
         this.reviewerId = reviewerId;
-        this.limitTime = new  ZoneDateTimeJpa(limitTime);
+        this.limitTime = new ZoneDateTimeJpa(limitTime);
         this.reviewAssignmentStatus = reviewAssignmentStatus;
     }
 
