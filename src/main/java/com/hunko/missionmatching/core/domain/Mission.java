@@ -56,4 +56,11 @@ public class Mission {
         this.timePeriod = timePeriod;
         this.missionUrl = missionUrl;
     }
+
+    public void delete() {
+        if (!MissionStatus.PENDING.equals(this.status)) {
+            ErrorType.INVALID_MISSION_STATE.throwException();
+        }
+        this.status = MissionStatus.DELETED;
+    }
 }

@@ -247,6 +247,44 @@ public class MissionIntegrationTest {
     }
 
     @Test
+    public void 사용자_삭제() throws Exception {
+
+        Mission pending = TestMissionFactory.createMission(null, MissionStatus.PENDING, 1L);
+
+        List<Mission> missions = saveMissions(pending);
+        Mission mission = missions.getFirst();
+
+        MvcResult result = mockMvc.perform(
+                        RequestBuildersHelper.delete("/api/missions/" + mission.getId().toLong())
+                                .authentication(String.valueOf(1), "ADMIN")
+
+                ).andDo(print())
+                .andReturn();
+
+        assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+        Mission deletedMission = MissionMapper.toMission(missionRepository.findById(mission.getId().toLong()).get());
+        assertThat(deletedMission.getStatus()).isEqualTo(MissionStatus.DELETED);
+    }
+
+    @Test
+    public void 사용자_삭제_권한없음() throws Exception {
+
+        Mission pending = TestMissionFactory.createMission(null, MissionStatus.PENDING, 1L);
+
+        List<Mission> missions = saveMissions(pending);
+        Mission mission = missions.getFirst();
+
+        MvcResult result = mockMvc.perform(
+                        RequestBuildersHelper.delete("/api/missions/" + mission.getId().toLong())
+                                .authentication(String.valueOf(1), "USER")
+
+                ).andDo(print())
+                .andReturn();
+
+        assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
+    }
+
+    @Test
     void 사용자_미션조회() throws Exception {
 
         Mission ongoing = TestMissionFactory.createMission(null, MissionStatus.ONGOING, 1L);

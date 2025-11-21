@@ -5,7 +5,6 @@ import com.hunko.missionmatching.core.application.service.MissionService;
 import com.hunko.missionmatching.core.application.service.ReviewRequestReader;
 import com.hunko.missionmatching.core.domain.Creator;
 import com.hunko.missionmatching.core.domain.Mission;
-import com.hunko.missionmatching.core.domain.MissionId;
 import com.hunko.missionmatching.core.domain.Requester;
 import com.hunko.missionmatching.core.domain.ReviewRequest;
 import com.hunko.missionmatching.core.presentation.dto.MissionCursorDto;
@@ -21,6 +20,7 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,6 +38,15 @@ public class MissionController {
     private final MissionService missionService;
     private final ReviewRequestReader reviewRequestReader;
 
+    @GetMapping
+    public MissionPageDto findAll(@UserId Long userId, @UserRole Authorities authorities,
+                                  @Validated MissionCursorDto cursorDto,
+                                  @RequestParam(defaultValue = "10") @Min(10) @Max(50) Integer limit) {
+        List<Mission> missions = missionService.loadFrom(authorities, cursorDto.toMissionCursor(limit));
+        List<ReviewRequest> reviewRequests = reviewRequestReader.loadFrom(Requester.of(userId));
+        return MissionPageDto.from(missions, reviewRequests);
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public Map<String, Long> register(@Validated @RequestBody MissionRequestDto missionRequestDto,
@@ -47,20 +56,17 @@ public class MissionController {
         return Map.of("id", id);
     }
 
-
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{missionId}")
     public void register(@Validated @NotNull @PathVariable Long missionId,
-                                      @Validated @RequestBody MissionRequestDto missionRequestDto) {
-       missionService.update(missionId, missionRequestDto.title(), missionRequestDto.timePeriod(), missionRequestDto.githubUri());
+                         @Validated @RequestBody MissionRequestDto missionRequestDto) {
+        missionService.update(missionId, missionRequestDto.title(), missionRequestDto.timePeriod(),
+                missionRequestDto.githubUri());
     }
 
-    @GetMapping
-    public MissionPageDto findAll(@UserId Long userId, @UserRole Authorities authorities,
-                                  @Validated MissionCursorDto cursorDto,
-                                  @RequestParam(defaultValue = "10") @Min(10) @Max(50) Integer limit) {
-        List<Mission> missions = missionService.loadFrom(authorities, cursorDto.toMissionCursor(limit));
-        List<ReviewRequest> reviewRequests = reviewRequestReader.loadFrom(Requester.of(userId));
-        return MissionPageDto.from(missions, reviewRequests);
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{missionId}")
+    public void register(@Validated @NotNull @PathVariable Long missionId) {
+        missionService.remove(missionId);
     }
 }

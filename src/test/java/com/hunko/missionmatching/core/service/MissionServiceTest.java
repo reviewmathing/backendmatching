@@ -157,4 +157,18 @@ class MissionServiceTest extends DomainEventUnitTest {
         Mission savedMission = fakeMissionSaver.getMission(mission.getId().toLong().intValue());
         assertThat(savedMission).isNotNull();
     }
+
+    @Test
+    void 미션_삭제_플로우검증() {
+        FakeMissionReader fakeMissionReader = new FakeMissionReader();
+        Mission mission = createMission(1L, MissionStatus.PENDING, 1L);
+        fakeMissionReader.addMission(mission);
+        FakeMissionSaver fakeMissionSaver = new FakeMissionSaver();
+        MissionService missionService = new MissionService(null, fakeMissionSaver, fakeMissionReader);
+
+        missionService.remove(1L);
+
+        Mission savedMission = fakeMissionSaver.getMission(mission.getId().toLong().intValue());
+        assertThat(savedMission).isNotNull();
+    }
 }

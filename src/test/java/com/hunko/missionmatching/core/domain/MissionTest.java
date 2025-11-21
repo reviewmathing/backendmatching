@@ -131,6 +131,32 @@ class MissionTest extends DomainEventUnitTest {
                .isInstanceOf(CoreException.class);
     }
 
+    @Test
+    void 미션삭제() {
+        Mission mission = new Mission("test1", new TimePeriod(ZonedDateTime.now(), ZonedDateTime.now().plusDays(1)),
+                Creator.of(1L),
+                GithubUri.of("https://github.com/woowacourse-precourse/java-lotto-8"));
+
+        mission.delete();
+
+        assertThat(mission.getStatus()).isEqualTo(MissionStatus.DELETED);
+    }
+
+    @Test
+    void 미션수정_삭제() {
+        Mission mission = new Mission(
+                MissionId.emtpy(),
+                "test1",
+                new TimePeriod(ZonedDateTime.now(), ZonedDateTime.now().plusDays(1)),
+                Creator.of(1L),
+                MissionStatus.ONGOING,
+                GithubUri.of("https://github.com/woowacourse-precourse/java-lotto-8")
+        );
+
+        assertThatThrownBy(() -> mission.delete())
+                .isInstanceOf(CoreException.class);
+    }
+
     private static Stream<Arguments> createFailArguments() {
         String title = "test";
         ZonedDateTime startDate = ZonedDateTime.of(2020, 1, 1, 0, 0, 0, 0, ZoneId.systemDefault());

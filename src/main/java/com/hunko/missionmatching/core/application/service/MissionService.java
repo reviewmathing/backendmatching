@@ -60,4 +60,10 @@ public class MissionService {
         mission.update(title, timePeriod, githubUri);
         missionSaver.save(mission);
     }
+
+    public void remove(Long id) {
+        Mission mission = missionReader.readById(id).orElseThrow(ErrorType.ENTITY_NOT_FOUND::toException);
+        mission.delete();
+        missionSaver.save(mission);
+    }
 }
