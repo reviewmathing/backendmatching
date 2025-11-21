@@ -3,7 +3,10 @@ package com.hunko.missionmatching.core;
 import static org.awaitility.Awaitility.await;
 
 import com.hunko.missionmatching.core.domain.MissionStatus;
+import com.hunko.missionmatching.core.domain.UserReader;
 import com.hunko.missionmatching.core.presentation.dto.MissionRegisterDto;
+import com.hunko.missionmatching.core.scheduler.MissionSchedulerWalFactory;
+import com.hunko.missionmatching.helper.StubFailMissionWalFactory;
 import com.hunko.missionmatching.storage.MissionEntity;
 import com.hunko.missionmatching.storage.MissionRepository;
 import java.time.LocalDateTime;
@@ -19,6 +22,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.bean.override.convention.TestBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.client.RestTemplate;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -31,6 +36,16 @@ class MissionStatusIntegrationTest {
 
     @Autowired
     private MissionRepository missionRepository;
+
+    @TestBean
+    private MissionSchedulerWalFactory missionWalFactory;
+
+    static MissionSchedulerWalFactory missionWalFactory() {
+        return new StubFailMissionWalFactory();
+    }
+
+    @MockitoBean
+    private UserReader userReader;
 
     @Test
     void 전체상태_플로우_검증() {

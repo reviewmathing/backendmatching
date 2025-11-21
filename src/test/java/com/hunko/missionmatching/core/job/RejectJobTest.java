@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.hunko.missionmatching.core.domain.GithubUri;
 import com.hunko.missionmatching.core.domain.ReviewRequestType;
+import com.hunko.missionmatching.core.domain.UserReader;
+import com.hunko.missionmatching.core.scheduler.MissionSchedulerWalFactory;
+import com.hunko.missionmatching.helper.StubFailMissionWalFactory;
 import com.hunko.missionmatching.storage.ReviewRequestEntity;
 import com.hunko.missionmatching.storage.ReviewRequestRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +22,8 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.convention.TestBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 @SpringBootTest
 @SpringBatchTest
@@ -32,6 +37,16 @@ class RejectJobTest {
 
     @Autowired
     private Job updateRejectJob;
+
+    @TestBean
+    private MissionSchedulerWalFactory missionWalFactory;
+
+    static MissionSchedulerWalFactory missionWalFactory() {
+        return new StubFailMissionWalFactory();
+    }
+
+    @MockitoBean
+    private UserReader userReader;
 
     @BeforeEach
     void setUp() {

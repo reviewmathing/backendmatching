@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.hunko.missionmatching.core.domain.MissionId;
 import com.hunko.missionmatching.core.domain.ReviewAssignment;
-import com.hunko.missionmatching.core.domain.ReviewAssignmentReader;
 import com.hunko.missionmatching.core.domain.ReviewAssignmentStatus;
 import com.hunko.missionmatching.core.domain.ReviewStatus;
 import com.hunko.missionmatching.core.domain.Reviewee;
@@ -17,20 +16,17 @@ import com.hunko.missionmatching.helper.EmptyReviewAssigmentReader;
 import com.hunko.missionmatching.helper.FakeLocalDateFactory;
 import com.hunko.missionmatching.helper.SingleReviewAssigmentReader;
 import com.hunko.missionmatching.helper.TestGithubUri;
-import com.hunko.missionmatching.util.LocalDateTimeFactory;
 import com.hunko.missionmatching.util.TestServerTimeSetup;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 class ReviewAssigmentServiceTest implements TestServerTimeSetup {
 
     @Test
     void 다른사용자_assigment조회시_예외() {
-        ReviewAssigmentService reviewAssigmentService = new ReviewAssigmentService(new SingleReviewAssigmentReader(createReviewAssignment(1)),
+        ReviewAssigmentService reviewAssigmentService = new ReviewAssigmentService(
+                new SingleReviewAssigmentReader(createReviewAssignment(1)),
                 null);
 
         assertThatThrownBy(() -> reviewAssigmentService.loadFrom(2L, 1L)).isInstanceOf(CoreException.class);
@@ -38,7 +34,8 @@ class ReviewAssigmentServiceTest implements TestServerTimeSetup {
 
     @Test
     void 같은사용자이면_정상처리() {
-        ReviewAssigmentService reviewAssigmentService = new ReviewAssigmentService(new SingleReviewAssigmentReader(createReviewAssignment(1)),
+        ReviewAssigmentService reviewAssigmentService = new ReviewAssigmentService(
+                new SingleReviewAssigmentReader(createReviewAssignment(1)),
                 null);
         assertThatCode(() -> reviewAssigmentService.loadFrom(1L, 1L)).doesNotThrowAnyException();
     }
@@ -47,10 +44,11 @@ class ReviewAssigmentServiceTest implements TestServerTimeSetup {
     void 리뷰완료처리_성공() {
         setUpServerTimeFactory(new FakeLocalDateFactory());
         FakeAssignmentSaver fakeAssignmentSaver = new FakeAssignmentSaver();
-        ReviewAssigmentService reviewAssigmentService = new ReviewAssigmentService(new SingleReviewAssigmentReader(createReviewAssignment(1)),
+        ReviewAssigmentService reviewAssigmentService = new ReviewAssigmentService(
+                new SingleReviewAssigmentReader(createReviewAssignment(1)),
                 fakeAssignmentSaver);
 
-        reviewAssigmentService.complete(1L,ReviewerId.of(1L),2L);
+        reviewAssigmentService.complete(1L, ReviewerId.of(1L), 2L);
 
         ReviewAssignment saved = fakeAssignmentSaver.getSaved();
         assertThat(saved.getReviewAssignmentStatus()).isEqualTo(ReviewAssignmentStatus.ALL_CLEARED);
@@ -63,17 +61,20 @@ class ReviewAssigmentServiceTest implements TestServerTimeSetup {
         ReviewAssigmentService reviewAssigmentService = new ReviewAssigmentService(new EmptyReviewAssigmentReader(),
                 fakeAssignmentSaver);
 
-        assertThatThrownBy(() -> reviewAssigmentService.complete(1L,ReviewerId.of(1L),2L)).isInstanceOf(CoreException.class);
+        assertThatThrownBy(() -> reviewAssigmentService.complete(1L, ReviewerId.of(1L), 2L)).isInstanceOf(
+                CoreException.class);
     }
 
     @Test
     void 다른대상그룹_완료처리() {
         setUpServerTimeFactory(new FakeLocalDateFactory());
         FakeAssignmentSaver fakeAssignmentSaver = new FakeAssignmentSaver();
-        ReviewAssigmentService reviewAssigmentService = new ReviewAssigmentService(new SingleReviewAssigmentReader(createReviewAssignment(1)),
+        ReviewAssigmentService reviewAssigmentService = new ReviewAssigmentService(
+                new SingleReviewAssigmentReader(createReviewAssignment(1)),
                 fakeAssignmentSaver);
 
-        assertThatThrownBy(() -> reviewAssigmentService.complete(1L,ReviewerId.of(2L),2L)).isInstanceOf(CoreException.class);
+        assertThatThrownBy(() -> reviewAssigmentService.complete(1L, ReviewerId.of(2L), 2L)).isInstanceOf(
+                CoreException.class);
     }
 
     private ReviewAssignment createReviewAssignment(long id) {

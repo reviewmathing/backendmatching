@@ -19,10 +19,10 @@ public abstract class MissionScheduler {
 
     private static final ExecutorService EXECUTOR = Executors.newVirtualThreadPerTaskExecutor();
     private final DelayQueue<SchedulerTask> delayQueue = new DelayQueue<>();
-    private final MissionSchedulerWal missionSchedulerWal;
+    private final MissionSchedulerWal failMissionSchedulerWal;
 
-    public MissionScheduler(String path, String failName) {
-        missionSchedulerWal = new MissionSchedulerWal(path, failName);
+    public MissionScheduler(MissionSchedulerWal failMissionSchedulerWal) {
+        this.failMissionSchedulerWal = failMissionSchedulerWal;
         initQueue();
 
         EXECUTOR.execute(() -> {
@@ -30,7 +30,7 @@ public abstract class MissionScheduler {
                 try {
                     SchedulerTask take = delayQueue.take();
                     handle(take.missionId, take.time);
-                    missionSchedulerWal.addLog(
+                    failMissionSchedulerWal.addLog(
                             new WalMissionDto(
                                     take.missionId,
                                     take.time,
@@ -50,7 +50,7 @@ public abstract class MissionScheduler {
         LocalDateTime time = getScheduleTime(mission);
         SchedulerTask schedulerTask = new SchedulerTask(time, mission.getId().toLong());
         delayQueue.add(schedulerTask);
-        missionSchedulerWal.addLog(
+        failMissionSchedulerWal.addLog(
                 new WalMissionDto(
                         schedulerTask.missionId,
                         schedulerTask.time,
@@ -64,7 +64,7 @@ public abstract class MissionScheduler {
     protected abstract void handle(Long id, LocalDateTime time);
 
     private void initQueue() {
-        List<WalMissionDto> walMissionDtos = missionSchedulerWal.readAll();
+        List<WalMissionDto> walMissionDtos = failMissionSchedulerWal.readAll();
         Map<Long, LocalDateTime> missionMap = new HashMap<>();
         for (WalMissionDto walMissionDto : walMissionDtos) {
             if(walMissionDto.queueActionType().equals(QueueActionType.OFFER)){

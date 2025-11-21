@@ -7,6 +7,7 @@ import com.hunko.missionmatching.core.domain.MissionId;
 import com.hunko.missionmatching.core.domain.Requester;
 import com.hunko.missionmatching.core.domain.ReviewRequest;
 import com.hunko.missionmatching.core.domain.ReviewRequestId;
+import com.hunko.missionmatching.core.domain.UserValidator;
 import com.hunko.missionmatching.core.exception.CoreException;
 import com.hunko.missionmatching.helper.FakeReviewRequestSaver;
 import com.hunko.missionmatching.helper.RuntimeExceptionThrowReviewRequestSaver;
@@ -18,7 +19,9 @@ class ReviewRequestServiceTest {
     @Test
     void 정상생성() {
         FakeReviewRequestSaver fakeReviewRequestSaver = new FakeReviewRequestSaver();
-        ReviewRequestService reviewRequestService = new ReviewRequestService(new FakeMissionValidator(true),
+        ReviewRequestService reviewRequestService = new ReviewRequestService(
+                new UserMissionValidator(true),
+                new FakeMissionValidator(true),
                 fakeReviewRequestSaver, null, null);
 
         Long id = reviewRequestService.request(new Requester(1L), MissionId.of(1L), 5);
@@ -30,7 +33,9 @@ class ReviewRequestServiceTest {
 
     @Test
     void 존재하지_않는_미션으로_요청() {
-        ReviewRequestService reviewRequestService = new ReviewRequestService(new FakeMissionValidator(false),
+        ReviewRequestService reviewRequestService = new ReviewRequestService(
+                new UserMissionValidator(true),
+                new FakeMissionValidator(false),
                 new FakeReviewRequestSaver(), null, null);
 
         assertThatThrownBy(() -> reviewRequestService.request(new Requester(1L), MissionId.of(1L), 5))
@@ -41,7 +46,9 @@ class ReviewRequestServiceTest {
     void 중복저장() {
         RuntimeExceptionThrowReviewRequestSaver reviewRequestSaver = new RuntimeExceptionThrowReviewRequestSaver(
                 new DataIntegrityViolationException("test"));
-        ReviewRequestService reviewRequestService = new ReviewRequestService(new FakeMissionValidator(false),
+        ReviewRequestService reviewRequestService = new ReviewRequestService(
+                new UserMissionValidator(true),
+                new FakeMissionValidator(false),
                 reviewRequestSaver, null, null);
 
         assertThatThrownBy(() -> reviewRequestService.request(new Requester(1L), MissionId.of(1L), 5))
@@ -59,6 +66,21 @@ class ReviewRequestServiceTest {
 
         @Override
         public boolean isInvalidMission(MissionId missionId) {
+            return valid;
+        }
+    }
+
+    private static class UserMissionValidator extends UserValidator {
+
+        private final boolean valid;
+
+        public UserMissionValidator(boolean valid) {
+            super(null, null);
+            this.valid = valid;
+        }
+
+        @Override
+        public boolean canRequestReview(Long userId) {
             return valid;
         }
     }

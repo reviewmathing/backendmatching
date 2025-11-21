@@ -16,6 +16,9 @@ import com.hunko.missionmatching.core.domain.ReviewRequestId;
 import com.hunko.missionmatching.core.domain.ReviewRequestSaver;
 import com.hunko.missionmatching.core.domain.ReviewRequestType;
 import com.hunko.missionmatching.core.domain.TestMissionFactory;
+import com.hunko.missionmatching.core.domain.UserReader;
+import com.hunko.missionmatching.core.scheduler.MissionSchedulerWalFactory;
+import com.hunko.missionmatching.helper.StubFailMissionWalFactory;
 import com.hunko.missionmatching.storage.MissionRepository;
 import com.hunko.missionmatching.storage.ReviewRequestRepository;
 import jakarta.persistence.EntityManager;
@@ -31,6 +34,8 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.convention.TestBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
@@ -54,6 +59,16 @@ class MissionListenerTest {
 
     @Autowired
     private MissionRepository missionRepository;
+
+    @TestBean
+    private MissionSchedulerWalFactory missionWalFactory;
+
+    static MissionSchedulerWalFactory missionWalFactory() {
+        return new StubFailMissionWalFactory();
+    }
+
+    @MockitoBean
+    private UserReader userReader;
 
     @BeforeEach
     void setUp() {

@@ -6,6 +6,9 @@ import com.hunko.missionmatching.core.domain.ReviewAssignmentStatus;
 import com.hunko.missionmatching.core.domain.Reviewee;
 import com.hunko.missionmatching.core.domain.RevieweeId;
 import com.hunko.missionmatching.core.domain.ReviewerId;
+import com.hunko.missionmatching.core.domain.UserReader;
+import com.hunko.missionmatching.core.scheduler.MissionSchedulerWalFactory;
+import com.hunko.missionmatching.helper.StubFailMissionWalFactory;
 import com.hunko.missionmatching.helper.TestGithubUri;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -13,12 +16,24 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.convention.TestBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 @SpringBootTest
 class ReviewAssignmentSaverTest {
 
     @Autowired
     private ReviewAssignmentSaver reviewAssignmentSaver;
+
+    @TestBean
+    private MissionSchedulerWalFactory missionWalFactory;
+
+    static MissionSchedulerWalFactory missionWalFactory() {
+        return new StubFailMissionWalFactory();
+    }
+
+    @MockitoBean
+    private UserReader userReader;
 
     @Test
     void save() {

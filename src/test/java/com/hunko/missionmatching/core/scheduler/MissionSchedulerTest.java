@@ -5,6 +5,7 @@ import static org.awaitility.Awaitility.await;
 import com.hunko.missionmatching.core.domain.Mission;
 import com.hunko.missionmatching.core.domain.MissionStatus;
 import com.hunko.missionmatching.core.domain.TestMissionFactory;
+import com.hunko.missionmatching.helper.StubFailMissionWal;
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
@@ -50,9 +51,11 @@ class MissionSchedulerTest {
 
         private boolean isHandleCall = false;
         private Long missionId;
+
         private LocalDateTime handleTime;
 
         public TestMissionScheduler(LocalDateTime scheduleTime) {
+            super(new StubFailMissionWal());
             this.scheduleTime = scheduleTime;
         }
 

@@ -7,7 +7,10 @@ import com.hunko.missionmatching.core.domain.MissionSaver;
 import com.hunko.missionmatching.core.domain.MissionStatus;
 import com.hunko.missionmatching.core.domain.ReviewRequestType;
 import com.hunko.missionmatching.core.domain.TestMissionFactory;
+import com.hunko.missionmatching.core.domain.UserReader;
+import com.hunko.missionmatching.core.scheduler.MissionSchedulerWalFactory;
 import com.hunko.missionmatching.helper.RequestBuildersHelper;
+import com.hunko.missionmatching.helper.StubFailMissionWalFactory;
 import com.hunko.missionmatching.storage.ReviewRequestEntity;
 import com.hunko.missionmatching.storage.ReviewRequestRepository;
 import com.jayway.jsonpath.JsonPath;
@@ -18,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.bean.override.convention.TestBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +40,16 @@ class ReviewRequestIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @TestBean
+    private MissionSchedulerWalFactory missionWalFactory;
+
+    static MissionSchedulerWalFactory missionWalFactory() {
+        return new StubFailMissionWalFactory();
+    }
+
+    @MockitoBean
+    private UserReader userReader;
 
     @Test
     void 리뷰요청저장() throws Exception {

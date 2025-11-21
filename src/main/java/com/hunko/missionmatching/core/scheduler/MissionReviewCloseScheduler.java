@@ -1,5 +1,6 @@
 package com.hunko.missionmatching.core.scheduler;
 
+import com.hunko.missionmatching.core.application.service.MissionService;
 import com.hunko.missionmatching.core.domain.Mission;
 import com.hunko.missionmatching.core.domain.ReviewLimitTimeCalcService;
 import com.hunko.missionmatching.util.DateUtil;
@@ -24,11 +25,11 @@ public class MissionReviewCloseScheduler extends MissionScheduler {
     private final JobLauncher jobLauncher;
     private final Job assignmentCloseJob;
 
-    public MissionReviewCloseScheduler(@Value("${scheduler.log.path}") String path,
+    public MissionReviewCloseScheduler(MissionSchedulerWalFactory factory,
                                        ReviewLimitTimeCalcService reviewLimitTimeCalcService,
                                        JobLauncher jobLauncher,
                                        Job assignmentCloseJob) {
-        super(path, "reviewCloseSchedule");
+        super(factory.create("reviewCloseSchedule"));
         this.reviewLimitTimeCalcService = reviewLimitTimeCalcService;
         this.jobLauncher = jobLauncher;
         this.assignmentCloseJob = assignmentCloseJob;

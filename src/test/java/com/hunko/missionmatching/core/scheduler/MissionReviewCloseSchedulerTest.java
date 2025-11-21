@@ -10,6 +10,8 @@ import com.hunko.missionmatching.core.domain.MissionStatus;
 import com.hunko.missionmatching.core.domain.ReviewAssignmentStatus;
 import com.hunko.missionmatching.core.domain.ReviewLimitTimeCalcService;
 import com.hunko.missionmatching.core.domain.TestMissionFactory;
+import com.hunko.missionmatching.core.domain.UserReader;
+import com.hunko.missionmatching.helper.StubFailMissionWalFactory;
 import com.hunko.missionmatching.storage.MissionRepository;
 import com.hunko.missionmatching.storage.ReviewAssignmentEntity;
 import com.hunko.missionmatching.storage.ReviewAssignmentRepository;
@@ -25,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.convention.TestBean;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 @SpringBootTest
@@ -42,6 +45,16 @@ class MissionReviewCloseSchedulerTest {
 
     @MockitoBean
     private ReviewLimitTimeCalcService  reviewLimitTimeCalcService;
+
+    @TestBean
+    private MissionSchedulerWalFactory missionWalFactory;
+
+    static MissionSchedulerWalFactory missionWalFactory() {
+        return new StubFailMissionWalFactory();
+    }
+
+    @MockitoBean
+    private UserReader userReader;
 
     @BeforeEach
     void setUp() {

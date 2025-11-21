@@ -23,7 +23,9 @@ import com.hunko.missionmatching.core.domain.UserReader;
 import com.hunko.missionmatching.core.presentation.dto.ReviewAssigmentDto;
 import com.hunko.missionmatching.core.presentation.dto.ReviewAssigmentDto.Details;
 import com.hunko.missionmatching.core.presentation.dto.ReviewAssigmentDto.RevieweeDetails;
+import com.hunko.missionmatching.core.scheduler.MissionSchedulerWalFactory;
 import com.hunko.missionmatching.helper.RequestBuildersHelper;
+import com.hunko.missionmatching.helper.StubFailMissionWalFactory;
 import com.hunko.missionmatching.helper.TestGithubUri;
 import com.hunko.missionmatching.storage.MissionRepository;
 import com.hunko.missionmatching.storage.ReviewAssignmentRepository;
@@ -39,6 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.bean.override.convention.TestBean;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -73,6 +76,13 @@ class ReviewAssignmentIntegrationTest {
 
     @Autowired
     private ReviewAssignmentRevieweeRepository reviewAssignmentRevieweeRepository;
+
+    @TestBean
+    private MissionSchedulerWalFactory missionWalFactory;
+
+    static MissionSchedulerWalFactory missionWalFactory() {
+        return new StubFailMissionWalFactory();
+    }
 
     @MockitoBean
     private UserReader userReader;

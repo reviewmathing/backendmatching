@@ -12,6 +12,9 @@ import com.hunko.missionmatching.core.domain.ReviewRequest;
 import com.hunko.missionmatching.core.domain.ReviewRequestId;
 import com.hunko.missionmatching.core.domain.ReviewRequestType;
 import com.hunko.missionmatching.core.domain.TestMissionFactory;
+import com.hunko.missionmatching.core.domain.UserReader;
+import com.hunko.missionmatching.core.scheduler.MissionSchedulerWalFactory;
+import com.hunko.missionmatching.helper.StubFailMissionWalFactory;
 import com.hunko.missionmatching.storage.MissionEntity;
 import com.hunko.missionmatching.storage.MissionMapper;
 import com.hunko.missionmatching.storage.ReviewRequestEntity;
@@ -26,6 +29,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.convention.TestBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 @SpringBootTest
 class MatchBatchServiceTestContainersTest {
@@ -38,6 +43,16 @@ class MatchBatchServiceTestContainersTest {
 
     @Autowired
     private MatchBatchService matchBatchService;
+
+    @TestBean
+    private MissionSchedulerWalFactory missionWalFactory;
+
+    static MissionSchedulerWalFactory missionWalFactory() {
+        return new StubFailMissionWalFactory();
+    }
+
+    @MockitoBean
+    private UserReader userReader;
 
     private Mission testMission;
 
